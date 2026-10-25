@@ -76,11 +76,14 @@ for (const width of [1280, 390])
           .click();
         await dialog.getByRole("checkbox", { name: /^Ozempic/ }).check();
         await dialog
-          .getByLabel("Elegir dosis de Ozempic", { exact: true })
-          .selectOption("0.5 mg");
+          .getByLabel("Elegir lápiz o pluma de Ozempic", { exact: true })
+          .selectOption("Ozempic 1 mg/dosis");
         const ozempic = dialog
           .locator("details.treatment-selected")
           .filter({ hasText: "Ozempic" });
+        await ozempic
+          .getByLabel("Dosis administrada de Ozempic", { exact: true })
+          .fill("0.5 mg");
         await ozempic.getByLabel(/: Frecuencia$/).fill("Cada 7 días");
         await ozempic
           .getByRole("checkbox", { name: "Con conteo de clics", exact: true })
@@ -94,9 +97,12 @@ for (const width of [1280, 390])
         await section("Configuración");
         await dialog.getByRole("button", { name: /^Wegovy/ }).click();
         await dialog
-          .getByLabel("Dosis disponibles (separadas por punto y coma)", {
-            exact: true,
-          })
+          .getByLabel(
+            "Presentaciones de pluma (mg por dosis, separadas por punto y coma)",
+            {
+              exact: true,
+            },
+          )
           .fill(
             "0.25 mg; 0.5 mg; 1 mg; 1.7 mg; 2.4 mg; Personalizada según registro",
           );

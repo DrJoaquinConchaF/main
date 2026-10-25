@@ -108,10 +108,5 @@ export function setClicks(notes, enabled) {
   const lines = String(notes || "")
     .split("\n")
     .filter((line) => !line.startsWith(marker));
-  return [
-    ...(enabled ? [marker + " · lápiz y número de clics: por completar"] : []),
-    ...lines,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  return [...(enabled ? [marker] : []), ...lines].filter(Boolean).join("\n");
 }

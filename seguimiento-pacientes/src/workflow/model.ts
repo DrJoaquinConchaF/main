@@ -1,3 +1,8 @@
+import {
+  resourceText,
+  devicePrescription,
+  canUseDevicePrescription,
+} from "../treatments/device.mjs";
 import definitions from "../clinical-workflow/fields.json";
 export const num = (v: any): number | null =>
   v === undefined || v === null || String(v).trim() === ""
@@ -485,6 +490,7 @@ export function visitTexts(data: any, patient: any, calculation: any) {
       .map(([k, v]) => (foodLabels[k] || k) + ": " + v),
     data.closing.assessment ? "Evaluación:\n" + data.closing.assessment : "",
     recommendations,
+    resourceText(c.wegovyResources || {}),
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -492,6 +498,11 @@ export function visitTexts(data: any, patient: any, calculation: any) {
     `Indicaciones de Nutriología · ${display(data.date)}`,
     `Hola ${patient.name.split(" ")[0]}, este es el resumen de lo acordado:`,
     recommendations,
+    resourceText(c.wegovyResources || {}),
+    c.wegovyResources?.includeRegimen &&
+    canUseDevicePrescription(data.medications)
+      ? devicePrescription(data.medications)
+      : "",
     c.treatmentInstructions
       ? "Tratamiento indicado:\n" + c.treatmentInstructions
       : "",

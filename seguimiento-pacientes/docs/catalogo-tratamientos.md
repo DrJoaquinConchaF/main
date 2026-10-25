@@ -8,7 +8,7 @@ En Consulta → Tratamiento que está utilizando, se despliega la lista, se busc
 
 Wegovy y Ozempic están separados. Wegovy admite 0.25, 0.5, 1, 1.7 y 2.4 mg; Ozempic, 0.25, 0.5 y 1 mg. También se incluyen tirzepatida, Contrave, fentermina 18.75/37.5 mg, orlistat, topiramato, Samexid y Rybelsus. Los suplementos incluyen whey, proteína vegetal, creatina, hierro oral/endovenoso, B12 oral/inyectable, vitamina D oral/gotas, zinc, cafeína, beta-alanina, omega 3, magnesio y multivitamínico.
 
-El profesional configura las dosis que usa, incluidas las formulaciones de hierro, concentración de gotas y cantidades elementales cuando correspondan. Las listas son opciones de registro; no generan una pauta ni titulación. El conteo de clics se marca explícitamente y se documenta en Notas con el lápiz y número utilizado. No se realiza conversión mg/clics.
+El profesional configura las dosis que usa, incluidas las formulaciones de hierro, concentración de gotas y cantidades elementales cuando correspondan. Las listas son opciones de registro; no generan una pauta ni titulación. El conteo de clics se marca explícitamente: la pluma queda en Notas y el número/rango manual entre paréntesis en la dosis. Presentación y dosis administrada son independientes; no se realiza conversión mg/clics. Véase `pluma-y-material-wegovy.md`.
 
 ## Persistencia y compatibilidad
 

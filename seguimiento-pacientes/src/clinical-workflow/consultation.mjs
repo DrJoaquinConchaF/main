@@ -1,3 +1,7 @@
+import {
+  validateDevice,
+  canUseDevicePrescription,
+} from "../treatments/device.mjs";
 import fields from "./fields.json" with { type: "json" };
 const statuses = new Set(fields.historyStatuses);
 export function historyForReservo(history) {
@@ -135,6 +139,38 @@ export function validateWorkspace(data) {
   ])
     if (!Array.isArray(data[key]) || data[key].length > 100)
       return "Lista inválida: " + key;
+  if (data.closing.wegovyResources !== undefined) {
+    const r = data.closing.wegovyResources;
+    if (
+      !object(r) ||
+      Object.keys(r).some(
+        (k) =>
+          ![
+            "guide",
+            "video",
+            "benefits",
+            "benefitsExplanation",
+            "includeRegimen",
+          ].includes(k),
+      ) ||
+      ["guide", "video", "benefits", "includeRegimen"].some(
+        (k) => r[k] !== undefined && typeof r[k] !== "boolean",
+      ) ||
+      (r.benefitsExplanation !== undefined &&
+        (typeof r.benefitsExplanation !== "string" ||
+          r.benefitsExplanation.length > 1500))
+    )
+      return "Revisa los materiales de apoyo seleccionados.";
+  }
+  for (const treatment of data.medications) {
+    const error = validateDevice(treatment);
+    if (error) return error;
+  }
+  if (
+    data.closing.wegovyResources?.includeRegimen &&
+    !canUseDevicePrescription(data.medications)
+  )
+    return "Revisa la pluma, dosis, frecuencia y clics antes de incluir el esquema en el resumen.";
   if (!Array.isArray(data.recall.meals) || data.recall.meals.length > 20)
     return "Recordatorio alimentario inválido.";
   const numeric = (v) =>

@@ -1,3 +1,4 @@
+import { readDevice, writeDevice } from "./device.mjs";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -117,6 +118,15 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
       )}
       {values.map((m: any, i: number) => {
         const entry = available.find((e) => selectedProduct([m], e.name));
+        const device = readDevice(m);
+        const penProduct =
+          !!entry?.clickCounting || hasClicks(m.notes) || !!device.pen;
+        const updateDevice = (patch: any) => {
+          const next = structuredClone(values);
+          next[i] = writeDevice(m, patch);
+          onChange(next);
+        };
+
         return (
           <details className="cw-repeater treatment-selected" key={i} open>
             <summary>
@@ -132,7 +142,46 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                   onChange={(e) => edit(i, "name", e.target.value)}
                 />
               </label>
-              {!!entry?.doses.length && (
+              {penProduct && (
+                <label className="cw-field">
+                  {"Elegir lápiz o pluma de " + m.name}
+                  <select
+                    aria-label={"Elegir lápiz o pluma de " + m.name}
+                    value={device.pen}
+                    onChange={(e) => updateDevice({ pen: e.target.value })}
+                  >
+                    <option value="">
+                      Seleccionar presentación de la pluma
+                    </option>
+                    {entry?.doses.map((dose: string) => (
+                      <option key={dose} value={m.name + " " + dose + "/dosis"}>
+                        {m.name + " " + dose + "/dosis"}
+                      </option>
+                    ))}
+                    {device.pen &&
+                      !entry?.doses.some(
+                        (dose: string) =>
+                          device.pen === m.name + " " + dose + "/dosis",
+                      ) && <option value={device.pen}>{device.pen}</option>}
+                  </select>
+                  <small>
+                    Presentación del dispositivo; no cambia la dosis
+                    administrada.
+                  </small>
+                </label>
+              )}
+              {penProduct && (
+                <label className="cw-field">
+                  {"Presentación exacta de " + m.name}
+                  <input
+                    aria-label={"Presentación exacta de " + m.name}
+                    value={device.pen}
+                    placeholder="Modelo, país, mg/dosis y concentración si corresponde"
+                    onChange={(e) => updateDevice({ pen: e.target.value })}
+                  />
+                </label>
+              )}
+              {!penProduct && !!entry?.doses.length && (
                 <label className="cw-field">
                   {"Elegir dosis de " + m.name}
                   <select
@@ -152,12 +201,26 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                 </label>
               )}
               <label className="cw-field">
-                {title + " " + (i + 1) + ": Dosis"}
+                {penProduct
+                  ? "Dosis administrada de " + m.name
+                  : title + " " + (i + 1) + ": Dosis"}
                 <input
-                  aria-label={title + " " + (i + 1) + ": Dosis"}
-                  value={m.dose}
-                  placeholder="Cantidad, unidad y presentación"
-                  onChange={(e) => edit(i, "dose", e.target.value)}
+                  aria-label={
+                    penProduct
+                      ? "Dosis administrada de " + m.name
+                      : title + " " + (i + 1) + ": Dosis"
+                  }
+                  value={penProduct ? device.dose : m.dose}
+                  placeholder={
+                    penProduct
+                      ? "Dosis administrada en mg (puede diferir de la pluma)"
+                      : "Cantidad, unidad y presentación"
+                  }
+                  onChange={(e) =>
+                    penProduct
+                      ? updateDevice({ dose: e.target.value })
+                      : edit(i, "dose", e.target.value)
+                  }
                 />
                 {/hierro/i.test(m.name) && (
                   <small>
@@ -189,18 +252,43 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                 <label className="cw-check">
                   <input
                     type="checkbox"
-                    checked={hasClicks(m.notes)}
-                    onChange={(e) =>
-                      edit(i, "notes", setClicks(m.notes, e.target.checked))
-                    }
+                    checked={hasClicks(m.notes) || !!device.clicks}
+                    onChange={(e) => {
+                      const next = structuredClone(values);
+                      next[i] = e.target.checked
+                        ? { ...m, notes: setClicks(m.notes, true) }
+                        : writeDevice(
+                            { ...m, notes: setClicks(m.notes, false) },
+                            { clicks: "" },
+                          );
+                      onChange(next);
+                    }}
                   />
                   Con conteo de clics
                 </label>
-                {hasClicks(m.notes) && (
-                  <p className="cw-muted">
-                    En Notas, completa el lápiz/presentación y número de clics
-                    utilizado. No se calculan equivalencias entre mg y clics.
-                  </p>
+                {(hasClicks(m.notes) || !!device.clicks) && (
+                  <>
+                    <label className="cw-field">
+                      {"Clics indicados de " + m.name}
+                      <input
+                        aria-label={"Clics indicados de " + m.name}
+                        value={device.clicks}
+                        placeholder="Número o rango verificado por ti"
+                        onChange={(e) =>
+                          updateDevice({ clicks: e.target.value })
+                        }
+                      />
+                      <small>
+                        Registro manual para la presentación exacta. Al cambiar
+                        pluma o dosis, vuelve a confirmar los clics. Sin
+                        conversión automática entre mg y clics.
+                      </small>
+                    </label>
+                    <p className="treatment-dose-preview">
+                      Dosis que quedará registrada:{" "}
+                      <strong>{m.dose || "Por completar"}</strong>
+                    </p>
+                  </>
                 )}
               </div>
             )}
@@ -398,10 +486,16 @@ export function CatalogEditor({ onDirty, onBusy }: any) {
                     />
                   </label>
                   <label className="cw-field">
-                    Dosis disponibles (separadas por punto y coma)
+                    {current.clickCounting
+                      ? "Presentaciones de pluma (mg por dosis, separadas por punto y coma)"
+                      : "Dosis disponibles (separadas por punto y coma)"}
                     <textarea
                       rows={4}
-                      aria-label="Dosis disponibles (separadas por punto y coma)"
+                      aria-label={
+                        current.clickCounting
+                          ? "Presentaciones de pluma (mg por dosis, separadas por punto y coma)"
+                          : "Dosis disponibles (separadas por punto y coma)"
+                      }
                       value={doseText[selected] ?? current.doses.join("; ")}
                       onChange={(e) => {
                         setDoseText((old) => ({

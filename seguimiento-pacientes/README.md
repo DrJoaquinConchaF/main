@@ -42,4 +42,4 @@ La encuesta previa y las integraciones con Reservo/WhatsApp/Canva quedan diferid
 
 ## Versión publicada
 
-Actualización desplegada y verificada en la misma URL privada. Worker `ee4ba68a-2e00-4ca5-8a05-3c445fe8037a`; migraciones aditivas 0011 y 0012 aplicadas. Compilación y 27 pruebas aprobadas, más 2 comprobaciones del HTML autónomo en su ejecución correspondiente. Login y rutas privadas comprobados mediante HTTPS real. Los datos originales permanecen intactos. Ver docs/estado-implementacion.md.
+Actualización desplegada y verificada en la misma URL privada. Worker `be49093e-9cb2-4fcb-8349-ff8494339203`; migraciones aditivas 0011 y 0012 aplicadas. Compilación y 29 pruebas aprobadas, más 2 comprobaciones del HTML autónomo en su ejecución correspondiente. Login y rutas privadas comprobados mediante HTTPS real. Los datos originales permanecen intactos. Ver docs/estado-implementacion.md.

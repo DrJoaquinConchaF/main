@@ -1,3 +1,4 @@
+import { WegovySupport } from "../treatments/WegovySupport";
 import {
   TreatmentPicker,
   CatalogEditor,
@@ -1500,6 +1501,15 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       >
                         Sugerir control en 6 semanas
                       </button>
+                    </Card>
+                    <Card title="Wegovy: texto para receta y material de apoyo">
+                      <WegovySupport
+                        medications={data.medications}
+                        settings={data.closing.wegovyResources || {}}
+                        onChange={(value: any) =>
+                          set("closing", "wegovyResources", value)
+                        }
+                      />
                     </Card>
                     <div className="cw-grid">
                       <Card

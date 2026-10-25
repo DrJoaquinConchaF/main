@@ -53,8 +53,11 @@ test(
         .click();
       await dialog.getByRole("checkbox", { name: /^Wegovy/ }).check();
       await dialog
-        .getByLabel("Elegir dosis de Wegovy", { exact: true })
-        .selectOption("1.7 mg");
+        .getByLabel("Elegir lápiz o pluma de Wegovy", { exact: true })
+        .selectOption("Wegovy 2.4 mg/dosis");
+      await dialog
+        .getByLabel("Dosis administrada de Wegovy", { exact: true })
+        .fill("1.2 mg");
       await dialog
         .getByLabel("Medicamentos en uso 1: Frecuencia", { exact: true })
         .fill("Cada 7 días");
@@ -62,10 +65,12 @@ test(
         .getByRole("checkbox", { name: "Con conteo de clics", exact: true })
         .check();
       await dialog
-        .getByLabel("Medicamentos en uso 1: Notas", { exact: true })
-        .fill(
-          "Con conteo de clics · lápiz y número registrados en este ejemplo simulado.",
-        );
+        .getByLabel("Clics indicados de Wegovy", { exact: true })
+        .fill("37–38");
+      await expect(
+        dialog.getByLabel("Medicamentos en uso 1: Notas", { exact: true }),
+      ).toHaveValue(/Pluma utilizada: Wegovy 2.4 mg\/dosis/);
+
       await dialog
         .locator("details.treatment-selector")
         .nth(1)
@@ -84,10 +89,41 @@ test(
       await expect(dialog.getByRole("status")).toContainText(
         "Consulta guardada",
       );
+      await section("Cierre");
+      await dialog
+        .getByRole("checkbox", {
+          name: "Incluir NovoCare Beneficios Chile",
+          exact: true,
+        })
+        .check();
+      await dialog
+        .getByRole("checkbox", {
+          name: "Incluir este esquema revisado en el resumen del paciente",
+          exact: true,
+        })
+        .check();
+      await expect(
+        dialog.getByLabel("Texto de Wegovy para receta", { exact: true }),
+      ).toHaveValue(/1.2 mg \(37–38 clics\)/);
+      await expect(
+        dialog.getByLabel("Resumen para el paciente", { exact: true }),
+      ).toHaveValue(/novocarebeneficios.cl/);
+      await expect(
+        dialog.getByLabel("Resumen para el paciente", { exact: true }),
+      ).toHaveValue(/1.2 mg \(37–38 clics\)/);
+      await dialog
+        .getByRole("button", { name: "Guardar consulta", exact: true })
+        .click();
+      await expect(dialog.getByRole("status")).toContainText(
+        "Consulta guardada",
+      );
       const before: any = await (
         await fetch(base + `/api/clinical/patients/${patient.id}`)
       ).json();
-      assert.equal(before.plans[0].data.medications[0].dose, "1.7 mg");
+      assert.equal(
+        before.plans[0].data.medications[0].dose,
+        "1.2 mg (37–38 clics)",
+      );
       assert.match(
         before.plans[0].data.medications[0].notes,
         /conteo de clics/,
