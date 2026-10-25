@@ -1,0 +1,846 @@
+{
+  "version": 1,
+  "source": "Catálogo del Excel aportado; sin verificación externa de su vigencia",
+  "activities": [
+    {
+      "id": "excel-met-10",
+      "group": "bicycling",
+      "name": "Ciclismo, <16 km/h, recreativo, al trabajo o por placer (CódigoTaylor 115)",
+      "met": 4.0
+    },
+    {
+      "id": "excel-met-11",
+      "group": "bicycling",
+      "name": "Ciclismo, >32.2 km/h, carrera, sin ayuda aerodinámica",
+      "met": 15.8
+    },
+    {
+      "id": "excel-met-12",
+      "group": "bicycling",
+      "name": "Ciclismo, 16-19,2 km/h, recreativo, lento, esfuerzo ligero",
+      "met": 6.8
+    },
+    {
+      "id": "excel-met-13",
+      "group": "bicycling",
+      "name": "Ciclismo, 19.3 km/h, sentado, manos sobre el manubrio o frenos, 80 rpm",
+      "met": 8.5
+    },
+    {
+      "id": "excel-met-14",
+      "group": "bicycling",
+      "name": "Ciclismo, 19.3-22.4 km/h, recreativo, esfuerzo moderado",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-15",
+      "group": "bicycling",
+      "name": "Ciclismo, 22.5-25.6 km/h, carrera o recreativo, rápido, esfuerzo intenso",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-16",
+      "group": "bicycling",
+      "name": "Ciclismo, 25.7-30.6 km/h, carrera/sin ayuda aerodinámica, o > 30.6 km/h con ayuda aerodinámica, muy rápido, carrera en general",
+      "met": 12.0
+    },
+    {
+      "id": "excel-met-17",
+      "group": "bicycling",
+      "name": "Ciclismo, BMX",
+      "met": 8.5
+    },
+    {
+      "id": "excel-met-18",
+      "group": "bicycling",
+      "name": "Ciclismo, general",
+      "met": 7.5
+    },
+    {
+      "id": "excel-met-19",
+      "group": "bicycling",
+      "name": "Ciclismo, recreativo, 9 km/h",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-20",
+      "group": "bicycling",
+      "name": "Ciclismo, recreativo, 15 km/h",
+      "met": 5.8
+    },
+    {
+      "id": "excel-met-21",
+      "group": "bicycling",
+      "name": "Ciclismo, de montaña, competitivo, carrera",
+      "met": 16.0
+    },
+    {
+      "id": "excel-met-22",
+      "group": "bicycling",
+      "name": "Ciclismo, de montaña, general",
+      "met": 8.5
+    },
+    {
+      "id": "excel-met-23",
+      "group": "bicycling",
+      "name": "Ciclismo, de montaña, general (poco menos intenso)",
+      "met": 7.0
+    },
+    {
+      "id": "excel-met-24",
+      "group": "bicycling",
+      "name": "Ciclismo, de montaña, en ascenso, esfuerzo intenso",
+      "met": 14.0
+    },
+    {
+      "id": "excel-met-25",
+      "group": "bicycling",
+      "name": "Ciclismo, sobre camino de tierra o terreno agrícola, esfuerzo moderado",
+      "met": 5.8
+    },
+    {
+      "id": "excel-met-26",
+      "group": "bicycling",
+      "name": "Ciclismo, de/hacia el trabajo, a ritmo propio",
+      "met": 6.8
+    },
+    {
+      "id": "excel-met-27",
+      "group": "conditioning exercise",
+      "name": "rowing, stationary, 100 watts, moderate effort",
+      "met": 7.0
+    },
+    {
+      "id": "excel-met-28",
+      "group": "conditioning exercise",
+      "name": "rowing, stationary, 150 watts, vigorous effort",
+      "met": 8.5
+    },
+    {
+      "id": "excel-met-29",
+      "group": "conditioning exercise",
+      "name": "rowing, stationary, 200 watts, very vigorous effort",
+      "met": 12.0
+    },
+    {
+      "id": "excel-met-30",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 101-160 watts, vigorous effort",
+      "met": 8.8
+    },
+    {
+      "id": "excel-met-31",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 161-200 watts, vigorous effort",
+      "met": 11.0
+    },
+    {
+      "id": "excel-met-32",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 201-270 watts, very vigorous effort",
+      "met": 14.0
+    },
+    {
+      "id": "excel-met-33",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 30-50 watts, very light to light effort",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-34",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 51-89 watts, light-to-moderate effort",
+      "met": 4.8
+    },
+    {
+      "id": "excel-met-35",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, 90-100 watts, moderate to vigorous effort",
+      "met": 6.8
+    },
+    {
+      "id": "excel-met-36",
+      "group": "conditioning exercise",
+      "name": "bicycling, stationary, RPM/Spin bike class",
+      "met": 8.5
+    },
+    {
+      "id": "excel-met-37",
+      "group": "conditioning exercise",
+      "name": "calisthenics (e.g., push ups, sit ups, pull-ups, jumping jacks), vigorous effort",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-38",
+      "group": "conditioning exercise",
+      "name": "calisthenics (e.g., push ups, sit ups, pull-ups, lunges), moderate effort",
+      "met": 3.8
+    },
+    {
+      "id": "excel-met-39",
+      "group": "conditioning exercise",
+      "name": "calisthenics (e.g., situps, abdominal crunches), light effort",
+      "met": 2.8
+    },
+    {
+      "id": "excel-met-40",
+      "group": "conditioning exercise",
+      "name": "calisthenics, light or moderate effort, general (e.g., back exercises), going up & down from floor (Taylor Code 150)",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-41",
+      "group": "conditioning exercise",
+      "name": "circuit training, including kettlebells, some aerobic movement with minimal rest, general, vigorous intensity",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-42",
+      "group": "conditioning exercise",
+      "name": "circuit training, moderate effort",
+      "met": 4.3
+    },
+    {
+      "id": "excel-met-43",
+      "group": "conditioning exercise",
+      "name": "Elliptical trainer, moderate effort",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-44",
+      "group": "conditioning exercise",
+      "name": "resistance training (weight lifting, free weights) powerlifting or bodybuilding, vigorous effort",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-45",
+      "group": "conditioning exercise",
+      "name": "resistance training (weight) training, squats , slow or explosive effort",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-46",
+      "group": "conditioning exercise",
+      "name": "resistance (weight) training, multiple exercises, 8-15 repetitions at varied resistance",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-47",
+      "group": "conditioning exercise",
+      "name": "health club exercise, general (Taylor Code 160)",
+      "met": 5.5
+    },
+    {
+      "id": "excel-met-48",
+      "group": "conditioning exercise",
+      "name": "health club exercise classes, general, gym/weight training combined in one visit",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-49",
+      "group": "conditioning exercise",
+      "name": "health club exercise, conditioning classes",
+      "met": 3.8
+    },
+    {
+      "id": "excel-met-50",
+      "group": "conditioning exercise",
+      "name": "stair-treadmill ergometer, general",
+      "met": 9.0
+    },
+    {
+      "id": "excel-met-51",
+      "group": "conditioning exercise",
+      "name": "rope skipping, general",
+      "met": 12.3
+    },
+    {
+      "id": "excel-met-52",
+      "group": "conditioning exercise",
+      "name": "rowing, stationary ergometer, general, vigorous effort",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-53",
+      "group": "conditioning exercise",
+      "name": "rowing, stationary, general, moderate effort",
+      "met": 4.8
+    },
+    {
+      "id": "excel-met-54",
+      "group": "conditioning exercise",
+      "name": "ski machine, general",
+      "met": 6.8
+    },
+    {
+      "id": "excel-met-55",
+      "group": "conditioning exercise",
+      "name": "pilates, general",
+      "met": 3.0
+    },
+    {
+      "id": "excel-met-56",
+      "group": "conditioning exercise",
+      "name": "teaching exercise class (e.g., aerobic, water)",
+      "met": 6.8
+    },
+    {
+      "id": "excel-met-57",
+      "group": "conditioning exercise",
+      "name": "upper body exercise, arm ergometer",
+      "met": 2.8
+    },
+    {
+      "id": "excel-met-58",
+      "group": "conditioning exercise",
+      "name": "upper body exercise, stationary bicycle - Airdyne (arms only) 40 rpm, moderate",
+      "met": 4.3
+    },
+    {
+      "id": "excel-met-59",
+      "group": "conditioning exercise",
+      "name": "yoga, Hatha",
+      "met": 2.5
+    },
+    {
+      "id": "excel-met-60",
+      "group": "conditioning exercise",
+      "name": "yoga, Power",
+      "met": 4.0
+    },
+    {
+      "id": "excel-met-61",
+      "group": "conditioning exercise",
+      "name": "yoga, Nadisodhana",
+      "met": 2.0
+    },
+    {
+      "id": "excel-met-62",
+      "group": "conditioning exercise",
+      "name": "yoga, Surya Namaskar",
+      "met": 3.3
+    },
+    {
+      "id": "excel-met-63",
+      "group": "inactivity",
+      "name": "sitting quietly, general",
+      "met": 1.3
+    },
+    {
+      "id": "excel-met-64",
+      "group": "leisure",
+      "name": "walking, 2.5 mph, downhill",
+      "met": 3.3
+    },
+    {
+      "id": "excel-met-65",
+      "group": "leisure",
+      "name": "walking, 2.5 mph, level, firm surface",
+      "met": 3.0
+    },
+    {
+      "id": "excel-met-66",
+      "group": "leisure",
+      "name": "walking, 2.8 to 3.2 mph, level, moderate pace, firm surface",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-67",
+      "group": "leisure",
+      "name": "walking, 2.9 to 3.5 mph, uphill, 1 to 5% grade",
+      "met": 5.3
+    },
+    {
+      "id": "excel-met-68",
+      "group": "leisure",
+      "name": "walking, 2.9 to 3.5 mph, uphill, 6% to 15% grade",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-69",
+      "group": "leisure",
+      "name": "walking, 3.5 mph, level, brisk, firm surface, walking for exercise",
+      "met": 4.3
+    },
+    {
+      "id": "excel-met-70",
+      "group": "leisure",
+      "name": "walking, 4.0 mph, level, firm surface, very brisk pace",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-71",
+      "group": "leisure",
+      "name": "walking, 4.5 mph, level, firm surface, very, very brisk",
+      "met": 7.0
+    },
+    {
+      "id": "excel-met-72",
+      "group": "leisure",
+      "name": "walking, 5.0 mph, level, firm surface",
+      "met": 8.3
+    },
+    {
+      "id": "excel-met-73",
+      "group": "leisure",
+      "name": "walking, 5.0 mph, uphill, 3% grade",
+      "met": 9.8
+    },
+    {
+      "id": "excel-met-74",
+      "group": "leisure",
+      "name": "walking, for exercise, 3.5 to 4 mph, with ski poles, Nordic walking, level, moderate pace",
+      "met": 4.8
+    },
+    {
+      "id": "excel-met-75",
+      "group": "leisure",
+      "name": "walking, for exercise, 5.0 mph, with ski poles, Nordic walking, level, fast pace",
+      "met": 9.5
+    },
+    {
+      "id": "excel-met-76",
+      "group": "leisure",
+      "name": "walking, for pleasure, work break",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-77",
+      "group": "leisure",
+      "name": "walking, grass track",
+      "met": 4.8
+    },
+    {
+      "id": "excel-met-78",
+      "group": "leisure",
+      "name": "walking, normal pace, plowed field or sand",
+      "met": 4.5
+    },
+    {
+      "id": "excel-met-79",
+      "group": "running",
+      "name": "Correr, 16 km/h (3,8 min/km)",
+      "met": 14.5
+    },
+    {
+      "id": "excel-met-80",
+      "group": "running",
+      "name": "Correr, 17,7 km/h (3,4 min/km)",
+      "met": 16.0
+    },
+    {
+      "id": "excel-met-81",
+      "group": "running",
+      "name": "Correr, 19,3 km/h (3,1 min/km)",
+      "met": 19.0
+    },
+    {
+      "id": "excel-met-82",
+      "group": "running",
+      "name": "Correr, 20,9 km/h (2,9 min/km)",
+      "met": 19.8
+    },
+    {
+      "id": "excel-met-83",
+      "group": "running",
+      "name": "Correr, 22,5 km/h (2,6 min/km)",
+      "met": 23.0
+    },
+    {
+      "id": "excel-met-84",
+      "group": "running",
+      "name": "Correr, 6,5 km/h (9 min/km)",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-85",
+      "group": "running",
+      "name": "Correr, 8 km/h (7,5 min/km)",
+      "met": 8.3
+    },
+    {
+      "id": "excel-met-86",
+      "group": "running",
+      "name": "Correr, 8,4 km/h (7,3 min/km)",
+      "met": 9.0
+    },
+    {
+      "id": "excel-met-87",
+      "group": "running",
+      "name": "Correr, 9,6 km/h (6,3 min/km)",
+      "met": 9.8
+    },
+    {
+      "id": "excel-met-88",
+      "group": "running",
+      "name": "Correr, 10,8 km/h (5,5 min/km)",
+      "met": 10.5
+    },
+    {
+      "id": "excel-met-89",
+      "group": "running",
+      "name": "Correr, 11,3 km/h (5,3 min/km)",
+      "met": 11.0
+    },
+    {
+      "id": "excel-met-90",
+      "group": "running",
+      "name": "Correr, 12 km/h (5 min/km)",
+      "met": 11.5
+    },
+    {
+      "id": "excel-met-91",
+      "group": "running",
+      "name": "Correr, 12,9 km/h (4,7 min/km)",
+      "met": 11.8
+    },
+    {
+      "id": "excel-met-92",
+      "group": "running",
+      "name": "Correr, 13,8 km/h (4,3 min/km)",
+      "met": 12.3
+    },
+    {
+      "id": "excel-met-93",
+      "group": "running",
+      "name": "Correr, 14,5 km/h (4,1 min/km)",
+      "met": 12.8
+    },
+    {
+      "id": "excel-met-94",
+      "group": "running",
+      "name": "Correr, cross country",
+      "met": 9.0
+    },
+    {
+      "id": "excel-met-95",
+      "group": "running",
+      "name": "Correr, subiendo escaleras",
+      "met": 15.0
+    },
+    {
+      "id": "excel-met-96",
+      "group": "running",
+      "name": "Correr, sobre una cinta, entrenamiento en grupo",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-97",
+      "group": "running",
+      "name": "Correr, maratón",
+      "met": 13.3
+    },
+    {
+      "id": "excel-met-98",
+      "group": "sports",
+      "name": "competitive soccer",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-99",
+      "group": "sports",
+      "name": "boxing (punching bag)",
+      "met": 5.5
+    },
+    {
+      "id": "excel-met-100",
+      "group": "sports",
+      "name": "boxing, in ring, general",
+      "met": 12.8
+    },
+    {
+      "id": "excel-met-101",
+      "group": "sports",
+      "name": "boxing, sparring",
+      "met": 7.8
+    },
+    {
+      "id": "excel-met-102",
+      "group": "sports",
+      "name": "golf, general",
+      "met": 4.8
+    },
+    {
+      "id": "excel-met-103",
+      "group": "sports",
+      "name": "golf, walking, carrying clubs",
+      "met": 4.3
+    },
+    {
+      "id": "excel-met-104",
+      "group": "sports",
+      "name": "golf, using power cart (Taylor Code 070)",
+      "met": 3.5
+    },
+    {
+      "id": "excel-met-105",
+      "group": "sports",
+      "name": "gymnastics",
+      "met": 3.8
+    },
+    {
+      "id": "excel-met-106",
+      "group": "sports",
+      "name": "rugby, union, team, competitive",
+      "met": 8.3
+    },
+    {
+      "id": "excel-met-107",
+      "group": "sports",
+      "name": "tennis, hitting balls, non-game play, moderate effort",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-108",
+      "group": "sports",
+      "name": "tennis, doubles",
+      "met": 4.5
+    },
+    {
+      "id": "excel-met-109",
+      "group": "sports",
+      "name": "tennis, doubles (T aylor Code 430)",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-110",
+      "group": "sports",
+      "name": "tennis, singles (T aylor Code 420)",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-111",
+      "group": "sports",
+      "name": "tennis, general",
+      "met": 7.3
+    },
+    {
+      "id": "excel-met-112",
+      "group": "sports",
+      "name": "archery, non-hunting",
+      "met": 4.3
+    },
+    {
+      "id": "excel-met-113",
+      "group": "sports",
+      "name": "badminton, competitive (T aylor Code 450)",
+      "met": 7.0
+    },
+    {
+      "id": "excel-met-114",
+      "group": "sports",
+      "name": "badminton, social singles and doubles, general",
+      "met": 5.5
+    },
+    {
+      "id": "excel-met-115",
+      "group": "sports",
+      "name": "basketball, game (T aylor Code 490)",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-116",
+      "group": "sports",
+      "name": "basketball, non-game, general (T aylor Code 480)",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-117",
+      "group": "sports",
+      "name": "basketball, general",
+      "met": 6.5
+    },
+    {
+      "id": "excel-met-118",
+      "group": "sports",
+      "name": "basketball, officiating (Taylor Code 500)",
+      "met": 7.0
+    },
+    {
+      "id": "excel-met-119",
+      "group": "sports",
+      "name": "basketball, shooting baskets",
+      "met": 4.5
+    },
+    {
+      "id": "excel-met-120",
+      "group": "sports",
+      "name": "basketball, drills, practice",
+      "met": 9.3
+    },
+    {
+      "id": "excel-met-121",
+      "group": "sports",
+      "name": "basketball, wheelchair",
+      "met": 7.8
+    },
+    {
+      "id": "excel-met-122",
+      "group": "sports",
+      "name": "cheerleading, gymnastic moves, competitive",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-123",
+      "group": "sports",
+      "name": "fencing",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-124",
+      "group": "sports",
+      "name": "football, competitive",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-125",
+      "group": "sports",
+      "name": "hockey, field",
+      "met": 7.8
+    },
+    {
+      "id": "excel-met-126",
+      "group": "sports",
+      "name": "hockey, ice, general",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-127",
+      "group": "sports",
+      "name": "hockey, ice, competitive",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-128",
+      "group": "sports",
+      "name": "horseback riding, trotting",
+      "met": 5.8
+    },
+    {
+      "id": "excel-met-129",
+      "group": "sports",
+      "name": "horseback riding, general",
+      "met": 5.5
+    },
+    {
+      "id": "excel-met-130",
+      "group": "sports",
+      "name": "horseback riding,walking",
+      "met": 3.8
+    },
+    {
+      "id": "excel-met-131",
+      "group": "sports",
+      "name": "martial arts, different types, slower pace, novice performers, practice",
+      "met": 5.3
+    },
+    {
+      "id": "excel-met-132",
+      "group": "sports",
+      "name": "martial arts, different types, moderate pace (e.g., judo, jujitsu, karate, kick boxing, tae kwan do, tai-bo, Muay Thai boxing)",
+      "met": 10.3
+    },
+    {
+      "id": "excel-met-133",
+      "group": "sports",
+      "name": "lacrosse",
+      "met": 8.0
+    },
+    {
+      "id": "excel-met-134",
+      "group": "sports",
+      "name": "skateboarding, general, moderate effort",
+      "met": 5.0
+    },
+    {
+      "id": "excel-met-135",
+      "group": "sports",
+      "name": "skateboarding, competitive, vigorous effort",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-136",
+      "group": "sports",
+      "name": "table tennis, ping pong (Taylor Code 410)",
+      "met": 4.0
+    },
+    {
+      "id": "excel-met-137",
+      "group": "sports",
+      "name": "tai chi, qi gong, general",
+      "met": 3.0
+    },
+    {
+      "id": "excel-met-138",
+      "group": "sports",
+      "name": "tai chi, qi gong, sitting, light effort",
+      "met": 1.5
+    },
+    {
+      "id": "excel-met-139",
+      "group": "sports",
+      "name": "volleyball (T aylor Code 400)",
+      "met": 4.0
+    },
+    {
+      "id": "excel-met-140",
+      "group": "sports",
+      "name": "volleyball, competitive, in gymnasium",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-141",
+      "group": "sports",
+      "name": "volleyball, non-competitive, 6 - 9 member team, general",
+      "met": 3.0
+    },
+    {
+      "id": "excel-met-142",
+      "group": "sports",
+      "name": "wrestling (one match = 5 minutes)",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-143",
+      "group": "sports",
+      "name": "track and field (e.g., shot, discus, hammer throw)",
+      "met": 4.0
+    },
+    {
+      "id": "excel-met-144",
+      "group": "sports",
+      "name": "track and field (e.g., high jump, long jump, triple jump, javelin, pole vault)",
+      "met": 6.0
+    },
+    {
+      "id": "excel-met-145",
+      "group": "sports",
+      "name": "track and field (e.g., steeplechase, hurdles)",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-146",
+      "group": "sports",
+      "name": "swimming laps, freestyle, fast, vigorous effort",
+      "met": 9.8
+    },
+    {
+      "id": "excel-met-147",
+      "group": "sports",
+      "name": "swimming laps, freestyle, front crawl, slow, light or moderate effort",
+      "met": 5.8
+    },
+    {
+      "id": "excel-met-148",
+      "group": "sports",
+      "name": "swimming, crawl, fast speed, 75 yards/minute, vigorous effort",
+      "met": 10.0
+    },
+    {
+      "id": "excel-met-149",
+      "group": "sports",
+      "name": "swimming, crawl, medium speed, 50 yards/minute, vigorous effort",
+      "met": 8.3
+    }
+  ]
+}

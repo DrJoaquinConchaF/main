@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "source": "Valores del Excel aportado, que indica UDD 2019; pendiente cotejar con el manual original",
+  "foods": [
+    {
+      "id": "exchange-47",
+      "name": "Lacteos Descremados",
+      "kcal": 70.0,
+      "protein": 7.0,
+      "fat": 0.0,
+      "carbohydrate": 10.0
+    },
+    {
+      "id": "exchange-48",
+      "name": "Lacteos Semidescremados",
+      "kcal": 85.0,
+      "protein": 5.0,
+      "fat": 3.0,
+      "carbohydrate": 9.0
+    },
+    {
+      "id": "exchange-49",
+      "name": "Lacteos Enteros",
+      "kcal": 110.0,
+      "protein": 5.0,
+      "fat": 6.0,
+      "carbohydrate": 9.0
+    },
+    {
+      "id": "exchange-50",
+      "name": "Carnes BG",
+      "kcal": 65.0,
+      "protein": 11.0,
+      "fat": 2.0,
+      "carbohydrate": 1.0
+    },
+    {
+      "id": "exchange-51",
+      "name": "Carnes AG",
+      "kcal": 120.0,
+      "protein": 11.0,
+      "fat": 8.0,
+      "carbohydrate": 1.0
+    },
+    {
+      "id": "exchange-52",
+      "name": "Legumbres secas",
+      "kcal": 170.0,
+      "protein": 11.0,
+      "fat": 1.0,
+      "carbohydrate": 30.0
+    },
+    {
+      "id": "exchange-53",
+      "name": "Verduras de consumo general",
+      "kcal": 25.0,
+      "protein": 2.0,
+      "fat": 0.0,
+      "carbohydrate": 5.0
+    },
+    {
+      "id": "exchange-54",
+      "name": "Panes, Cereales, Legumbres frescas y tubérculos",
+      "kcal": 140.0,
+      "protein": 3.0,
+      "fat": 1.0,
+      "carbohydrate": 30.0
+    },
+    {
+      "id": "exchange-55",
+      "name": "Verduras de libre consumo",
+      "kcal": 10.0,
+      "protein": 0.0,
+      "fat": 0.0,
+      "carbohydrate": 2.5
+    },
+    {
+      "id": "exchange-56",
+      "name": "Frutas",
+      "kcal": 60.0,
+      "protein": 0.0,
+      "fat": 0.0,
+      "carbohydrate": 15.0
+    },
+    {
+      "id": "exchange-57",
+      "name": "Azúcares",
+      "kcal": 20.0,
+      "protein": 0.0,
+      "fat": 0.0,
+      "carbohydrate": 5.0
+    },
+    {
+      "id": "exchange-58",
+      "name": "Aceites, grasas y alimentos ricos en lípidos",
+      "kcal": 45.0,
+      "protein": 0.0,
+      "fat": 5.0,
+      "carbohydrate": 0.0
+    }
+  ]
+}

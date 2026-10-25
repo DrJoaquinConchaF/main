@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "history": [
+    {
+      "id": "conditions",
+      "title": "Enfermedades crónicas",
+      "abbreviation": "AM"
+    },
+    {
+      "id": "surgeries",
+      "title": "Cirugías",
+      "abbreviation": "Qx"
+    },
+    {
+      "id": "allergies",
+      "title": "Alergias",
+      "abbreviation": "Alerg"
+    },
+    {
+      "id": "intolerances",
+      "title": "Intolerancias alimentarias",
+      "abbreviation": "Intol"
+    },
+    {
+      "id": "treatments",
+      "title": "Fármacos y suplementos",
+      "abbreviation": "Farm/sup"
+    },
+    {
+      "id": "tobaccoDrugs",
+      "title": "Tabaco y otras sustancias",
+      "abbreviation": "TB"
+    },
+    {
+      "id": "alcohol",
+      "title": "Alcohol",
+      "abbreviation": "OH"
+    },
+    {
+      "id": "eatingDisorders",
+      "title": "Antecedentes de TCA",
+      "abbreviation": "Ant. TCA"
+    },
+    {
+      "id": "family",
+      "title": "Antecedentes familiares",
+      "abbreviation": "Ant. Fam"
+    },
+    {
+      "id": "occupation",
+      "title": "Trabajo y actividad laboral",
+      "abbreviation": "Lab"
+    },
+    {
+      "id": "household",
+      "title": "Con quién vive",
+      "abbreviation": "Vive"
+    },
+    {
+      "id": "cooking",
+      "title": "Quién cocina y dónde come",
+      "abbreviation": "Cocina"
+    }
+  ],
+  "historyStatuses": [
+    "not_asked",
+    "none",
+    "reported",
+    "unknown",
+    "prefers_discussion"
+  ],
+  "provenance": [
+    "clinic",
+    "home_measured",
+    "self_reported",
+    "device_estimate"
+  ],
+  "controlSections": [
+    {
+      "id": "treatment",
+      "title": "Tratamiento actual",
+      "fields": [
+        "medications",
+        "supplements",
+        "changes",
+        "tolerance"
+      ]
+    },
+    {
+      "id": "experience",
+      "title": "Cómo fue desde el último control",
+      "fields": [
+        "understanding",
+        "questions",
+        "barriers",
+        "adherencePercent",
+        "adherencePeriod",
+        "bodyChanges",
+        "strengthPerformance",
+        "aerobicPerformance",
+        "recovery"
+      ]
+    },
+    {
+      "id": "food",
+      "title": "Alimentación",
+      "fields": [
+        "largerPortions",
+        "snacking",
+        "ultraprocessed",
+        "friedFoods",
+        "sweets",
+        "sugaryDrinks",
+        "delivery",
+        "eatingOut",
+        "alcohol",
+        "socialEvents"
+      ]
+    },
+    {
+      "id": "habits",
+      "title": "Hábitos",
+      "fields": [
+        "dailyStepsLastMonth",
+        "weeklyActivities",
+        "stress1to10",
+        "stressEating",
+        "psychotherapy",
+        "drinkSources",
+        "sleepHours",
+        "restorativeSleep",
+        "snoring",
+        "observedBreathingPauses"
+      ]
+    },
+    {
+      "id": "measurements",
+      "title": "Mediciones disponibles",
+      "fields": [
+        "weight",
+        "height",
+        "waistWHO",
+        "waistNavel",
+        "waistSmall",
+        "hip",
+        "armRelaxed",
+        "armFlexed",
+        "forearm",
+        "chest",
+        "thighMax",
+        "thighMid",
+        "calf",
+        "systolic",
+        "diastolic",
+        "heartRate"
+      ]
+    },
+    {
+      "id": "closing",
+      "title": "Evaluación e indicaciones",
+      "fields": [
+        "assessment",
+        "dietStrategy",
+        "referral",
+        "stepGoalMinimum",
+        "stepGoalIdeal",
+        "strengthSessionsGoal",
+        "cardioMinutesGoal",
+        "newMedications",
+        "newSupplements",
+        "examOrders",
+        "educationalMaterials",
+        "recommendedNextVisit",
+        "bookedNextVisit"
+      ]
+    }
+  ],
+  "dietStrategies": [
+    "Fitia flexible",
+    "Pauta de intercambios",
+    "Derivación a nutricionista",
+    "Orientaciones generales"
+  ],
+  "recall": {
+    "specificDay": true,
+    "usualDaySeparately": true,
+    "meals": [
+      "Desayuno",
+      "Colación mañana",
+      "Almuerzo",
+      "Colación tarde / once",
+      "Cena",
+      "Otras ingestas y bebidas"
+    ],
+    "fields": [
+      "time",
+      "food",
+      "amount",
+      "householdMeasure",
+      "preparation",
+      "additions",
+      "context"
+    ]
+  },
+  "templateLibrary": {
+    "categories": [
+      "prescription",
+      "exam_order",
+      "patient_instructions",
+      "education"
+    ],
+    "fields": [
+      "title",
+      "category",
+      "text",
+      "attachment",
+      "updatedAt"
+    ],
+    "allowMultipleSelection": true,
+    "automaticallySend": false
+  },
+  "followUp": {
+    "initialSuggestedDays": 42,
+    "recommendationIsNotBooking": true
+  },
+  "deferred": [
+    "Encuesta previa",
+    "Envío automático WhatsApp",
+    "Integración Reservo",
+    "Integración Canva",
+    "Inferencias antropométricas desde fotografías"
+  ]
+}
