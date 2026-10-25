@@ -253,7 +253,7 @@ for (const config of [
             name: "TEST plantilla " + config.width + ".txt",
             mimeType: "text/plain",
             buffer: Buffer.from(
-              "Paciente {{paciente}}. Texto ficticio para prueba, sin dosis ni indicaciones reales.",
+              "Paciente {{paciente}}. Fecha {{fecha}}. Texto ficticio para prueba, sin dosis ni indicaciones reales.",
             ),
           });
         await expect(
@@ -265,6 +265,19 @@ for (const config of [
         await expect(dialog.locator(".cw-template-list")).toContainText(
           "TEST plantilla " + config.width,
         );
+        await page
+          .context()
+          .grantPermissions(["clipboard-read", "clipboard-write"]);
+        await dialog
+          .locator(".cw-template-list article")
+          .filter({ hasText: "TEST plantilla " + config.width })
+          .getByRole("button", { name: "Copiar para paciente", exact: true })
+          .click();
+        const copied = await page.evaluate(() =>
+          navigator.clipboard.readText(),
+        );
+        assert.ok(copied.includes("06-12-2026"));
+        assert.ok(copied.includes(patient.name));
         await dialog
           .getByRole("button", {
             name: "PDFs, fotografías y gráficos",

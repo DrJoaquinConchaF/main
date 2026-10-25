@@ -1428,7 +1428,11 @@ export function Workspace({ patient, onClose }: any) {
               />
             )}
             {tab === "Plantillas" && (
-              <Library patient={patient} onDirty={setLibraryDirty} />
+              <Library
+                patient={patient}
+                date={date}
+                onDirty={setLibraryDirty}
+              />
             )}
             <details className="cw-card cw-history-list">
               <summary>Registros previos ({allDates.length})</summary>
@@ -2243,7 +2247,7 @@ function Evolution({ bundle, date, choose, onLegacy }: any) {
     </>
   );
 }
-function Library({ patient, onDirty }: any) {
+function Library({ patient, date, onDirty }: any) {
   const [items, setItems] = useState<any[]>([]),
     [draft, setDraft] = useState<any>({
       kind: "prescription",
@@ -2410,7 +2414,7 @@ function Library({ patient, onDirty }: any) {
                 text={t.content
                   .replace(/\{\{paciente\}\}/g, patient.name)
                   .replace(/\{\{rut\}\}/g, patient.rut || "")
-                  .replace(/\{\{fecha\}\}/g, display(today()))}
+                  .replace(/\{\{fecha\}\}/g, display(date))}
               />
             </article>
           ))
