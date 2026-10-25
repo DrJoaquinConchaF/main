@@ -69,6 +69,44 @@ for (const width of [1280, 390])
             .getByRole("navigation", { name: "Secciones de la consulta" })
             .getByRole("button", { name, exact: true })
             .click();
+        await section("Consulta");
+        await dialog
+          .getByText("Seleccionar medicamentos", { exact: false })
+          .first()
+          .click();
+        await dialog.getByRole("checkbox", { name: /^Ozempic/ }).check();
+        await dialog
+          .getByLabel("Elegir dosis de Ozempic", { exact: true })
+          .selectOption("0.5 mg");
+        const ozempic = dialog
+          .locator("details.treatment-selected")
+          .filter({ hasText: "Ozempic" });
+        await ozempic.getByLabel(/: Frecuencia$/).fill("Cada 7 días");
+        await ozempic
+          .getByRole("checkbox", { name: "Con conteo de clics", exact: true })
+          .check();
+        await expect(ozempic.getByLabel(/: Notas$/)).toHaveValue(
+          /Con conteo de clics/,
+        );
+        await ozempic
+          .getByRole("button", { name: "Quitar de esta atención", exact: true })
+          .click();
+        await section("Configuración");
+        await dialog.getByRole("button", { name: /^Wegovy/ }).click();
+        await dialog
+          .getByLabel("Dosis disponibles (separadas por punto y coma)", {
+            exact: true,
+          })
+          .fill(
+            "0.25 mg; 0.5 mg; 1 mg; 1.7 mg; 2.4 mg; Personalizada según registro",
+          );
+        await dialog
+          .getByRole("button", { name: "Guardar catálogo", exact: true })
+          .click();
+        await expect(dialog.getByRole("status")).toContainText(
+          "Catálogo guardado",
+        );
+        await section("Consulta");
         // Visual shortcuts must show measured values and keep the consultation draft.
         await expect(
           dialog.getByRole("region", { name: "Resumen de esta atención" }),

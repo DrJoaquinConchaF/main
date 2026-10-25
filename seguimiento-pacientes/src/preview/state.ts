@@ -1,3 +1,4 @@
+import { defaultCatalog, validateCatalog } from "../treatments/catalog.mjs";
 import { seedVisit, buildSave } from "../workflow/model";
 import { validateWorkspace } from "../clinical-workflow/consultation.mjs";
 import {
@@ -346,6 +347,7 @@ export function initialDemo() {
 export function installPreviewApi() {
   let state = initialDemo();
   let templates: any[] = [];
+  let catalog: any = { items: copy(defaultCatalog), version: 0 };
   const response = (data: any, status = 200) =>
     new Response(JSON.stringify(data), {
       status,
@@ -362,6 +364,15 @@ export function installPreviewApi() {
       body = init.body ? JSON.parse(init.body) : {};
     } catch {
       return response({ error: "Datos inválidos." }, 400);
+    }
+    if (path === "/api/clinical/treatment-catalog") {
+      if (method === "GET") return response(copy(catalog));
+      const error = validateCatalog(body.items);
+      if (error) return response({ error }, 400);
+      if (body.expectedVersion !== catalog.version)
+        return response({ error: "El catálogo cambió." }, 409);
+      catalog = { items: copy(body.items), version: catalog.version + 1 };
+      return response({ version: catalog.version });
     }
     if (path === "/api/patients") return response([demoPatient]);
     if (path === "/api/clinical/patients/" + demoPatient.id && method === "GET")

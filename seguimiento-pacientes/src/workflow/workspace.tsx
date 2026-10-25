@@ -1,3 +1,8 @@
+import {
+  TreatmentPicker,
+  CatalogEditor,
+  openCatalogSettings,
+} from "../treatments/ui";
 import { BodyEvolution } from "../evolution/BodyEvolution";
 import React, { useEffect, useState } from "react";
 import {
@@ -166,6 +171,7 @@ const tabs = [
   "Cierre",
   "Evolución",
   "Plantillas",
+  "Configuración",
 ];
 export function Workspace({ patient, onClose, initialDate }: any) {
   const [libraryDirty, setLibraryDirty] = useState(false);
@@ -450,12 +456,13 @@ export function Workspace({ patient, onClose, initialDate }: any) {
     : { clinical: "", patientText: "" };
   const switchSection = (next: string) => {
     if (
-      tab === "Plantillas" &&
+      (tab === "Plantillas" || tab === "Configuración") &&
       libraryDirty &&
       !window.confirm("Hay una plantilla sin guardar. ¿Descartarla?")
     )
       return;
     setLibraryDirty(false);
+    if (next === "Configuración") setNotice("");
     setTab(next);
     document.querySelector(".cw-content")?.scrollIntoView({ block: "start" });
   };
@@ -759,12 +766,14 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         )
                       }
                     >
-                      <TreatmentList
+                      <TreatmentPicker
+                        onConfigure={openCatalogSettings}
                         title="Medicamentos en uso"
                         values={data.medications}
                         onChange={(v: any) => set("", "medications", v)}
                       />
-                      <TreatmentList
+                      <TreatmentPicker
+                        onConfigure={openCatalogSettings}
                         title="Suplementos en uso"
                         values={data.supplements}
                         onChange={(v: any) => set("", "supplements", v)}
@@ -1548,6 +1557,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                     onLegacy={() => leave("Evolución")}
                   />
                 )}
+                {tab === "Configuración" && (
+                  <Card title="Configuración del catálogo">
+                    <CatalogEditor onDirty={setLibraryDirty} />
+                  </Card>
+                )}
                 {tab === "Plantillas" && (
                   <Library
                     patient={patient}
@@ -1658,49 +1672,6 @@ function HistorySummary({ history, override, onChange }: any) {
         </p>
       )}
     </Card>
-  );
-}
-function TreatmentList({ title, values, onChange }: any) {
-  return (
-    <div className="cw-treatment">
-      <h3>{title}</h3>
-      {values.map((m: any, i: number) => (
-        <div className="cw-repeater" key={i}>
-          <div className="cw-grid">
-            {[
-              ["name", "Nombre"],
-              ["dose", "Dosis"],
-              ["frequency", "Frecuencia"],
-              ["notes", "Notas"],
-            ].map(([k, l]) => (
-              <Field
-                key={k}
-                label={title + " " + (i + 1) + ": " + l}
-                value={m[k]}
-                onChange={(v: string) => {
-                  const list = structuredClone(values);
-                  list[i][k] = v;
-                  onChange(list);
-                }}
-              />
-            ))}
-          </div>
-          <button
-            onClick={() =>
-              onChange(values.filter((_: any, j: number) => j !== i))
-            }
-          >
-            Quitar de esta atención
-          </button>
-        </div>
-      ))}
-      <button onClick={() => onChange([...values, newTreatment()])}>
-        Agregar{" "}
-        {title.toLowerCase().includes("medicamentos")
-          ? "medicamento"
-          : "suplemento"}
-      </button>
-    </div>
   );
 }
 function WeightHistory({ values, onChange }: any) {

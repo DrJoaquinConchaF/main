@@ -12,6 +12,7 @@ function fixture() {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec(readFileSync("legacy/current-schema.sql", "utf8"));
   sqlite.exec(readFileSync("migrations/0011_clinical_workflow.sql", "utf8"));
+  sqlite.exec(readFileSync("migrations/0012_treatment_catalog.sql", "utf8"));
   sqlite.exec(
     "INSERT INTO patients(id,name,name_search,email) VALUES('one','TEST uno','test uno','one@example.invalid'),('two','TEST dos','test dos','two@example.invalid');",
   );
@@ -359,4 +360,53 @@ test("Historial anterior: controles y tratamientos visibles sin inventar respues
     seedVisit("2026-02-21", { ...bundle, records: [] }).data.type,
     "control",
   );
+});
+
+test("Catálogo: persistencia con versión, validación, origen y controles previos intactos", async () => {
+  const f = fixture();
+  try {
+    const initial = await f.request("/clinical/treatment-catalog");
+    assert.equal(initial.status, 200);
+    assert.equal(initial.data.version, 0);
+    const items = structuredClone(initial.data.items);
+    assert.ok(items.find((e: any) => e.id === "wegovy"));
+    assert.ok(items.find((e: any) => e.id === "ozempic"));
+    items.find((e: any) => e.id === "hierro-oral").doses = [
+      "60 mg de hierro elemental",
+    ];
+    const saved = await f.request("/clinical/treatment-catalog", "PUT", {
+      items,
+      expectedVersion: 0,
+    });
+    assert.equal(saved.status, 200);
+    assert.equal(saved.data.version, 1);
+    const stale = await f.request("/clinical/treatment-catalog", "PUT", {
+      items: [],
+      expectedVersion: 0,
+    });
+    assert.equal(stale.status, 409);
+    const forbidden = await f.request(
+      "/clinical/treatment-catalog",
+      "PUT",
+      { items, expectedVersion: 1 },
+      "https://otro.invalid",
+    );
+    assert.equal(forbidden.status, 403);
+    const bad = await f.request("/clinical/treatment-catalog", "PUT", {
+      items: [items[0], items[0]],
+      expectedVersion: 1,
+    });
+    assert.equal(bad.status, 400);
+    const read = await f.request("/clinical/treatment-catalog");
+    assert.deepEqual(
+      read.data.items.find((e: any) => e.id === "hierro-oral").doses,
+      ["60 mg de hierro elemental"],
+    );
+    assert.equal(
+      f.sqlite.prepare("SELECT COUNT(*) AS n FROM patients").get()!.n,
+      2,
+    );
+  } finally {
+    f.sqlite.close();
+  }
 });

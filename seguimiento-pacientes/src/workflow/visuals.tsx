@@ -80,6 +80,11 @@ export const sectionLook: Record<
     tone: "lavender",
     description: "Compara los controles",
   },
+  Configuración: {
+    icon: "templates",
+    tone: "rose",
+    description: "Medicamentos y suplementos",
+  },
   Plantillas: {
     icon: "templates",
     tone: "peach",

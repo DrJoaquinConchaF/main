@@ -1,3 +1,4 @@
+import { defaultCatalog, validateCatalog } from "../src/treatments/catalog.mjs";
 import {
   authenticated,
   local,
@@ -39,6 +40,48 @@ export async function clinicalApi(req: Request, env: any): Promise<Response> {
   }
   if (!(await authenticated(req, env)))
     return fail("Inicia sesión para acceder.", 401);
+  if (url.pathname === "/api/clinical/treatment-catalog") {
+    if (req.method === "GET") {
+      const row: any = await env.DB.prepare(
+        "SELECT data,version FROM clinical_catalogs WHERE key='treatments'",
+      ).first();
+      return json({
+        items: row ? JSON.parse(row.data) : defaultCatalog,
+        version: row?.version || 0,
+      });
+    }
+    if (req.method !== "PUT") return fail("Método no permitido.", 405);
+    const raw = await req.text();
+    if (raw.length > 150000) return fail("Catálogo demasiado grande.", 413);
+    let body: any;
+    try {
+      body = JSON.parse(raw);
+    } catch {
+      return fail("Solicitud inválida.");
+    }
+    if (!object(body) || !version(body.expectedVersion))
+      return fail("Versión inválida.");
+    const error = validateCatalog(body.items);
+    if (error) return fail(error);
+    const result = await env.DB.prepare(
+      `INSERT INTO clinical_catalogs(key,data,version)
+      SELECT 'treatments',?,1 WHERE ?=0 OR EXISTS(SELECT 1 FROM clinical_catalogs WHERE key='treatments' AND version=?)
+      ON CONFLICT(key) DO UPDATE SET data=excluded.data,version=clinical_catalogs.version+1,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE clinical_catalogs.version=? RETURNING version`,
+    )
+      .bind(
+        JSON.stringify(body.items),
+        body.expectedVersion,
+        body.expectedVersion,
+        body.expectedVersion,
+      )
+      .first();
+    if (!result)
+      return fail(
+        "El catálogo cambió en otra ventana. Recarga antes de guardar.",
+        409,
+      );
+    return json(result);
+  }
   const route = url.pathname.match(
     /^\/api\/clinical\/patients\/([^/]+)(?:\/visits\/([0-9-]+))?$/,
   );

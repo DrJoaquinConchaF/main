@@ -1,4 +1,5 @@
 import React from "react";
+import { openCatalogSettings } from "../treatments/ui";
 import { enhanceLegacyEvolution } from "../evolution/legacy-bridge";
 import { createRoot } from "react-dom/client";
 import { Workspace } from "./workspace";
@@ -29,6 +30,15 @@ function open(patient: any) {
 }
 let resolving = false;
 async function observe() {
+  const settings = document.querySelector("#root .template-settings");
+  if (settings && !settings.querySelector("[data-treatment-settings]")) {
+    const launch = document.createElement("button");
+    launch.dataset.treatmentSettings = "true";
+    launch.textContent = "Medicamentos y suplementos";
+    launch.onclick = openCatalogSettings;
+    settings.insertBefore(launch, settings.firstChild);
+  }
+
   for (const mark of document.querySelectorAll<HTMLElement>(".brand-mark")) {
     if (mark.dataset.monogram === "jc") continue;
     mark.dataset.monogram = "jc";
