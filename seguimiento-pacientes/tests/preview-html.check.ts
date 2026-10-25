@@ -69,11 +69,28 @@ for (const width of [1280, 390])
             .getByRole("navigation", { name: "Secciones de la consulta" })
             .getByRole("button", { name, exact: true })
             .click();
-        await section("Mediciones");
+        // Visual shortcuts must show measured values and keep the consultation draft.
+        await expect(
+          dialog.getByRole("region", { name: "Resumen de esta atención" }),
+        ).toContainText("83");
+        await dialog.getByRole("button", { name: /^Peso: 83 kg/ }).click();
+
         await expect(
           dialog.getByLabel("Peso (kg)", { exact: true }),
         ).toHaveValue("83");
         await dialog.getByLabel("Peso (kg)", { exact: true }).fill("82");
+        await section("Consulta");
+        await expect(
+          dialog.getByRole("button", { name: /^Peso: 82 kg/ }),
+        ).toBeVisible();
+        if (width === 390) {
+          await dialog
+            .getByLabel("Ir a sección", { exact: true })
+            .selectOption("Mediciones");
+          await expect(
+            dialog.getByLabel("Peso (kg)", { exact: true }),
+          ).toHaveValue("82");
+        }
         await dialog
           .getByRole("button", { name: "Guardar consulta", exact: true })
           .click();
@@ -129,6 +146,18 @@ for (const width of [1280, 390])
         await expect(
           dialog.getByLabel("Peso (kg)", { exact: true }),
         ).toHaveValue("83");
+        await dialog
+          .getByLabel("Fecha de atención", { exact: true })
+          .fill("2026-12-01");
+        await section("Consulta");
+        await expect(
+          dialog.getByRole("button", { name: /^Peso: Por registrar/ }),
+        ).toBeVisible();
+        await expect(
+          dialog.getByRole("button", {
+            name: /^Sueño promedio: Por registrar/,
+          }),
+        ).toBeVisible();
         assert.deepEqual(errors, []);
         assert.deepEqual(requests, []);
         assert.ok(hits.every((p) => p === "/" || p === "/favicon.ico"));

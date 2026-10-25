@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { Icon, sectionLook, ConsultationOverview } from "./visuals";
 import definitions from "../clinical-workflow/fields.json";
 import activityCatalog from "../clinical-workflow/activities.json";
 import exchanges from "../clinical-workflow/exchanges.json";
@@ -446,6 +447,17 @@ export function Workspace({ patient, onClose, initialDate }: any) {
   const text = data
     ? visitTexts(data, patient, macro)
     : { clinical: "", patientText: "" };
+  const switchSection = (next: string) => {
+    if (
+      tab === "Plantillas" &&
+      libraryDirty &&
+      !window.confirm("Hay una plantilla sin guardar. ¿Descartarla?")
+    )
+      return;
+    setLibraryDirty(false);
+    setTab(next);
+    document.querySelector(".cw-content")?.scrollIntoView({ block: "start" });
+  };
   return (
     <div
       className="cw"
@@ -454,14 +466,24 @@ export function Workspace({ patient, onClose, initialDate }: any) {
       aria-label="Consulta clínica"
     >
       <header className="cw-top">
-        <div>
-          <span className="cw-eyebrow">CONSULTA Y SEGUIMIENTO</span>
-          <h1>{patient.name}</h1>
-          <p>
-            {patient.rut || "Sin RUT"} ·{" "}
-            {patient.is_demo ? "Paciente de demostración" : "Ficha privada"}
-            {previous ? " · Atención anterior: " + display(previous) : ""}
-          </p>
+        <div className="cw-patient-identity">
+          <span
+            className="brand-mark"
+            data-monogram="jc"
+            role="img"
+            aria-label="JC · Dr. Joaquín Concha"
+          >
+            JC
+          </span>
+          <div>
+            <span className="cw-eyebrow">CONSULTA Y SEGUIMIENTO</span>
+            <h1>{patient.name}</h1>
+            <p>
+              {patient.rut || "Sin RUT"} ·{" "}
+              {patient.is_demo ? "Paciente de demostración" : "Ficha privada"}
+              {previous ? " · Atención anterior: " + display(previous) : ""}
+            </p>
+          </div>
         </div>
         <div className="cw-top-actions">
           <button onClick={() => leave()}>Cambiar paciente / volver</button>
@@ -532,926 +554,1026 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                 </small>
               </div>
             </section>
-            <nav className="cw-nav" aria-label="Secciones de la consulta">
-              {tabs.map((t) => (
-                <button
-                  key={t}
-                  aria-current={tab === t ? "page" : undefined}
-                  onClick={() => {
-                    if (
-                      tab === "Plantillas" &&
-                      libraryDirty &&
-                      !window.confirm(
-                        "Hay una plantilla sin guardar. ¿Descartarla?",
-                      )
-                    )
-                      return;
-                    setLibraryDirty(false);
-                    setTab(t);
-                  }}
-                >
-                  {t}
-                </button>
-              ))}
-            </nav>
-            {tab === "Antecedentes" && (
-              <>
-                <Card
-                  title="Antecedentes personales"
-                  subtitle="Se conservan en la ficha del paciente. Revísalos y actualiza lo que cambió."
-                >
-                  <div className="cw-grid">
-                    {historyFields.map((f) => {
-                      const h = data.history[f.id] || {
-                        status: "not_asked",
-                        text: "",
-                      };
-                      return (
-                        <div className="cw-history" key={f.id}>
-                          <Field
-                            label={f.title + " (" + f.abbreviation + ")"}
-                            value={h.status}
-                            options={[
-                              ["not_asked", "No preguntado"],
-                              ["reported", "Informado"],
-                              ["none", "Niega / no presenta"],
-                              ["unknown", "No sabe"],
-                              ["prefers_discussion", "Pendiente de conversar"],
-                            ]}
-                            onChange={(v: string) =>
-                              change((d) => {
-                                d.history[f.id] = { ...h, status: v };
-                              })
-                            }
-                          />
-                          <Field
-                            label={"Detalle: " + f.title}
-                            type="textarea"
-                            value={h.text}
-                            onChange={(v: string) =>
-                              change((d) => {
-                                d.history[f.id] = {
-                                  status: v ? "reported" : h.status,
-                                  text: v,
-                                };
-                              })
-                            }
-                          />
-                        </div>
-                      );
-                    })}
+            <div className="cw-layout">
+              <nav className="cw-nav" aria-label="Secciones de la consulta">
+                <span className="cw-nav-label">TU CONSULTA</span>
+                {tabs.map((t) => (
+                  <button
+                    key={t}
+                    data-tone={sectionLook[t].tone}
+                    aria-label={t}
+                    aria-current={tab === t ? "page" : undefined}
+                    onClick={() => switchSection(t)}
+                  >
+                    <span className="cw-nav-icon">
+                      <Icon name={sectionLook[t].icon} />
+                    </span>
+                    <span>
+                      {t}
+                      <small>{sectionLook[t].description}</small>
+                    </span>
+                  </button>
+                ))}
+              </nav>
+              <div className="cw-content" data-section={sectionLook[tab].tone}>
+                <div className="cw-mobile-section">
+                  <label htmlFor="mobile-consultation-section">
+                    Ir a sección
+                  </label>
+                  <select
+                    id="mobile-consultation-section"
+                    value={tab}
+                    onChange={(e) => switchSection(e.target.value)}
+                  >
+                    {tabs.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="cw-section-title">
+                  <span className="cw-section-icon">
+                    <Icon name={sectionLook[tab].icon} />
+                  </span>
+                  <div>
+                    <span className="cw-eyebrow">
+                      {sectionLook[tab].description}
+                    </span>
+                    <h2>{tab}</h2>
                   </div>
-                </Card>
-                <HistorySummary
-                  history={data.history}
-                  override={data.historySummaryOverride}
-                  onChange={(v: any) => set("", "historySummaryOverride", v)}
-                />
-              </>
-            )}
-            {tab === "Consulta" && (
-              <>
-                <Card
-                  title={
-                    data.type === "initial"
-                      ? "Motivo, objetivos y contexto"
-                      : "Cómo fue desde la última consulta"
-                  }
-                  subtitle="La información de esta atención se guarda por separado de los controles anteriores."
-                >
-                  <Field
-                    label="Objetivo de consulta / contexto actual"
-                    type="textarea"
-                    value={data.context}
-                    onChange={(v: string) => set("", "context", v)}
-                  />
-                  <div className="cw-grid">
-                    <Field
-                      label="¿Entendió el método?"
-                      value={data.general.understanding}
-                      options={[
-                        ["", "No evaluado"],
-                        ["Sí", "Sí"],
-                        ["Parcialmente", "Parcialmente"],
-                        ["No", "No"],
-                      ]}
-                      onChange={(v: string) =>
-                        set("general", "understanding", v)
+                </div>
+                {tab === "Antecedentes" && (
+                  <>
+                    <Card
+                      title="Antecedentes personales"
+                      subtitle="Se conservan en la ficha del paciente. Revísalos y actualiza lo que cambió."
+                    >
+                      <div className="cw-grid">
+                        {historyFields.map((f) => {
+                          const h = data.history[f.id] || {
+                            status: "not_asked",
+                            text: "",
+                          };
+                          return (
+                            <div className="cw-history" key={f.id}>
+                              <Field
+                                label={f.title + " (" + f.abbreviation + ")"}
+                                value={h.status}
+                                options={[
+                                  ["not_asked", "No preguntado"],
+                                  ["reported", "Informado"],
+                                  ["none", "Niega / no presenta"],
+                                  ["unknown", "No sabe"],
+                                  [
+                                    "prefers_discussion",
+                                    "Pendiente de conversar",
+                                  ],
+                                ]}
+                                onChange={(v: string) =>
+                                  change((d) => {
+                                    d.history[f.id] = { ...h, status: v };
+                                  })
+                                }
+                              />
+                              <Field
+                                label={"Detalle: " + f.title}
+                                type="textarea"
+                                value={h.text}
+                                onChange={(v: string) =>
+                                  change((d) => {
+                                    d.history[f.id] = {
+                                      status: v ? "reported" : h.status,
+                                      text: v,
+                                    };
+                                  })
+                                }
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Card>
+                    <HistorySummary
+                      history={data.history}
+                      override={data.historySummaryOverride}
+                      onChange={(v: any) =>
+                        set("", "historySummaryOverride", v)
                       }
                     />
-                    <Field
-                      label="Adherencia autoinformada (%)"
-                      inputMode="decimal"
-                      value={data.general.adherencePercent}
-                      hint="0 a 100 · desde el control anterior"
-                      onChange={(v: string) =>
-                        set("general", "adherencePercent", v)
+                  </>
+                )}
+                {tab === "Consulta" && (
+                  <>
+                    <ConsultationOverview
+                      data={data}
+                      date={date}
+                      records={bundle.records}
+                      onSection={switchSection}
+                    />
+
+                    <Card
+                      title={
+                        data.type === "initial"
+                          ? "Motivo, objetivos y contexto"
+                          : "Cómo fue desde la última consulta"
                       }
-                    />
-                    <Field
-                      label="Dificultades, dudas y barreras"
-                      type="textarea"
-                      value={data.general.barriers}
-                      onChange={(v: string) => set("general", "barriers", v)}
-                    />
-                    <Field
-                      label="Cambios corporales notados"
-                      type="textarea"
-                      value={data.general.bodyChanges}
-                      onChange={(v: string) => set("general", "bodyChanges", v)}
-                    />
-                  </div>
-                  <Field
-                    label="Rendimiento y recuperación"
-                    type="textarea"
-                    hint="Cargas, fuerza, capacidad aeróbica, sensaciones y recuperación."
-                    value={data.general.performance}
-                    onChange={(v: string) => set("general", "performance", v)}
-                  />
-                </Card>
-                <Card
-                  title="Tratamiento que está utilizando"
-                  subtitle="Registra el uso real y la tolerancia. Las nuevas indicaciones se redactan al cerrar la consulta."
-                  action={
-                    previousPlan && (
-                      <button
-                        onClick={() =>
-                          change((d) => {
-                            d.medications = structuredClone(
-                              previousPlan.data.medications,
-                            );
-                            d.supplements = structuredClone(
-                              previousPlan.data.supplements,
-                            );
-                          })
-                        }
-                      >
-                        Traer tratamiento anterior para revisar
-                      </button>
-                    )
-                  }
-                >
-                  <TreatmentList
-                    title="Medicamentos en uso"
-                    values={data.medications}
-                    onChange={(v: any) => set("", "medications", v)}
-                  />
-                  <TreatmentList
-                    title="Suplementos en uso"
-                    values={data.supplements}
-                    onChange={(v: any) => set("", "supplements", v)}
-                  />
-                  <Field
-                    label="Cambios, tolerancia o efectos adversos"
-                    type="textarea"
-                    value={data.general.tolerance}
-                    onChange={(v: string) => set("general", "tolerance", v)}
-                  />
-                </Card>
-                <WeightHistory
-                  values={data.weightHistory}
-                  onChange={(v: any) => set("", "weightHistory", v)}
-                />
-              </>
-            )}
-            {tab === "Hábitos y alimentación" && (
-              <>
-                <Card title="Movimiento, estrés y sueño">
-                  <div className="cw-grid">
-                    {habitFields.map(([k, l, u]) => (
+                      subtitle="La información de esta atención se guarda por separado de los controles anteriores."
+                    >
                       <Field
-                        key={k}
-                        label={l + " (" + u + ")"}
-                        inputMode="decimal"
-                        value={data.habits[k]}
-                        onChange={(v: string) => set("habits", k, v)}
-                      />
-                    ))}
-                    {textHabits.map(([k, l]) => (
-                      <Field
-                        key={k}
-                        label={l}
-                        value={data.habits[k]}
-                        onChange={(v: string) => set("habits", k, v)}
-                      />
-                    ))}
-                    {[
-                      [
-                        "stressEating",
-                        "Relación del estrés con comida o actividad",
-                      ],
-                      ["support", "Psicoterapia u otros apoyos"],
-                    ].map(([k, l]) => (
-                      <Field
-                        key={k}
-                        label={l}
-                        value={data.general[k]}
-                        onChange={(v: string) => set("general", k, v)}
-                      />
-                    ))}
-                    {[
-                      ["snoring", "Ronquidos"],
-                      ["breathingPauses", "Pausas respiratorias observadas"],
-                      ["restorative", "Sueño reparador"],
-                    ].map(([k, l]) => (
-                      <Field
-                        key={k}
-                        label={l}
-                        options={[
-                          ["", "No preguntado"],
-                          ["Sí", "Sí"],
-                          ["No", "No"],
-                          ["No sabe", "No sabe"],
-                        ]}
-                        value={data.general[k]}
-                        onChange={(v: string) => set("general", k, v)}
-                      />
-                    ))}
-                  </div>
-                </Card>
-                <Activities
-                  values={data.activities}
-                  onChange={(v: any) => set("", "activities", v)}
-                />
-                <Drinks
-                  values={data.drinks}
-                  onChange={(
-                    values: any,
-                    total: number | null,
-                    water: number | null,
-                  ) =>
-                    change((d) => {
-                      d.drinks = values;
-                      d.habits.liquids = total ?? "";
-                      d.habits.water = water ?? "";
-                    })
-                  }
-                />
-                <Card title="Patrón de alimentación">
-                  <div className="cw-grid">
-                    {foodFields.map(([k, l, u]) => (
-                      <Field
-                        key={k}
-                        label={l + " (" + u + ")"}
-                        inputMode="decimal"
-                        value={data.habits[k]}
-                        onChange={(v: string) => set("habits", k, v)}
-                      />
-                    ))}
-                    {[
-                      [
-                        "portions",
-                        "Porciones aumentadas o fuera de lo acordado",
-                      ],
-                      ["sugars", "Azúcares simples y bebidas azucaradas"],
-                      ["social", "Eventos sociales y alcohol"],
-                      ["notes", "Otras dificultades alimentarias"],
-                    ].map(([k, l]) => (
-                      <Field
-                        key={k}
-                        label={l}
+                        label="Objetivo de consulta / contexto actual"
                         type="textarea"
-                        value={data.foodNotes[k]}
-                        onChange={(v: string) => set("foodNotes", k, v)}
+                        value={data.context}
+                        onChange={(v: string) => set("", "context", v)}
                       />
-                    ))}
-                  </div>
-                </Card>
-                <Card
-                  title="Recordatorio de 24 horas"
-                  subtitle="Registra un día específico. El patrón habitual se describe por separado."
-                >
-                  <div className="cw-grid">
-                    <Field
-                      label="Día recordado"
-                      type="date"
-                      value={data.recall.date}
-                      onChange={(v: string) => set("recall", "date", v)}
-                    />
-                    <Field
-                      label="Contexto del día"
-                      value={data.recall.context}
-                      hint="Oficina, teletrabajo, fin de semana, día de entrenamiento…"
-                      onChange={(v: string) => set("recall", "context", v)}
-                    />
-                  </div>
-                  {data.recall.meals.map((m: any, i: number) => (
-                    <div className="cw-meal" key={m.name}>
-                      <h3>{m.name}</h3>
                       <div className="cw-grid">
                         <Field
-                          label={m.name + ": hora"}
-                          type="time"
-                          value={m.time}
+                          label="¿Entendió el método?"
+                          value={data.general.understanding}
+                          options={[
+                            ["", "No evaluado"],
+                            ["Sí", "Sí"],
+                            ["Parcialmente", "Parcialmente"],
+                            ["No", "No"],
+                          ]}
                           onChange={(v: string) =>
-                            change((d) => {
-                              d.recall.meals[i].time = v;
-                            })
+                            set("general", "understanding", v)
                           }
                         />
                         <Field
-                          label={m.name + ": alimentos y bebidas"}
-                          value={m.food}
+                          label="Adherencia autoinformada (%)"
+                          inputMode="decimal"
+                          value={data.general.adherencePercent}
+                          hint="0 a 100 · desde el control anterior"
                           onChange={(v: string) =>
-                            change((d) => {
-                              d.recall.meals[i].food = v;
-                            })
+                            set("general", "adherencePercent", v)
                           }
                         />
                         <Field
-                          label={m.name + ": cantidad / medida casera"}
-                          value={m.amount}
+                          label="Dificultades, dudas y barreras"
+                          type="textarea"
+                          value={data.general.barriers}
                           onChange={(v: string) =>
-                            change((d) => {
-                              d.recall.meals[i].amount = v;
-                            })
+                            set("general", "barriers", v)
                           }
                         />
                         <Field
-                          label={m.name + ": preparación y agregados"}
-                          value={m.preparation}
+                          label="Cambios corporales notados"
+                          type="textarea"
+                          value={data.general.bodyChanges}
                           onChange={(v: string) =>
-                            change((d) => {
-                              d.recall.meals[i].preparation = v;
-                            })
+                            set("general", "bodyChanges", v)
                           }
                         />
                       </div>
-                    </div>
-                  ))}
-                  <Field
-                    label="¿Fue un día habitual? Diferencias entre semana y fin de semana"
-                    type="textarea"
-                    value={data.recall.typical}
-                    onChange={(v: string) => set("recall", "typical", v)}
-                  />
-                </Card>
-              </>
-            )}
-            {tab === "Mediciones" && (
-              <>
-                <Card
-                  title="Mediciones de esta atención"
-                  subtitle="En online puedes registrar solo lo disponible; las cifras anteriores no se copian como mediciones nuevas."
-                >
-                  <Field
-                    label="Procedencia de las mediciones"
-                    value={data.measurementSource}
-                    options={[
-                      ["", "Seleccionar"],
-                      ["clinic", "Medidas en consulta"],
-                      ["home_measured", "Medidas en casa con instrucciones"],
-                      ["self_reported", "Informadas por el paciente"],
-                      ["device_estimate", "Estimación de dispositivo"],
-                    ]}
-                    onChange={(v: string) => set("", "measurementSource", v)}
-                  />
-                  <div className="cw-grid">
-                    {measureFields.map(([k, l, u]) => (
                       <Field
-                        key={k}
-                        label={l + " (" + u + ")"}
-                        inputMode="decimal"
-                        value={data.measurements[k]}
-                        onChange={(v: string) => set("measurements", k, v)}
+                        label="Rendimiento y recuperación"
+                        type="textarea"
+                        hint="Cargas, fuerza, capacidad aeróbica, sensaciones y recuperación."
+                        value={data.general.performance}
+                        onChange={(v: string) =>
+                          set("general", "performance", v)
+                        }
                       />
+                    </Card>
+                    <Card
+                      title="Tratamiento que está utilizando"
+                      subtitle="Registra el uso real y la tolerancia. Las nuevas indicaciones se redactan al cerrar la consulta."
+                      action={
+                        previousPlan && (
+                          <button
+                            onClick={() =>
+                              change((d) => {
+                                d.medications = structuredClone(
+                                  previousPlan.data.medications,
+                                );
+                                d.supplements = structuredClone(
+                                  previousPlan.data.supplements,
+                                );
+                              })
+                            }
+                          >
+                            Traer tratamiento anterior para revisar
+                          </button>
+                        )
+                      }
+                    >
+                      <TreatmentList
+                        title="Medicamentos en uso"
+                        values={data.medications}
+                        onChange={(v: any) => set("", "medications", v)}
+                      />
+                      <TreatmentList
+                        title="Suplementos en uso"
+                        values={data.supplements}
+                        onChange={(v: any) => set("", "supplements", v)}
+                      />
+                      <Field
+                        label="Cambios, tolerancia o efectos adversos"
+                        type="textarea"
+                        value={data.general.tolerance}
+                        onChange={(v: string) => set("general", "tolerance", v)}
+                      />
+                    </Card>
+                    <WeightHistory
+                      values={data.weightHistory}
+                      onChange={(v: any) => set("", "weightHistory", v)}
+                    />
+                  </>
+                )}
+                {tab === "Hábitos y alimentación" && (
+                  <>
+                    <Card title="Movimiento, estrés y sueño">
+                      <div className="cw-grid">
+                        {habitFields.map(([k, l, u]) => (
+                          <Field
+                            key={k}
+                            label={l + " (" + u + ")"}
+                            inputMode="decimal"
+                            value={data.habits[k]}
+                            onChange={(v: string) => set("habits", k, v)}
+                          />
+                        ))}
+                        {textHabits.map(([k, l]) => (
+                          <Field
+                            key={k}
+                            label={l}
+                            value={data.habits[k]}
+                            onChange={(v: string) => set("habits", k, v)}
+                          />
+                        ))}
+                        {[
+                          [
+                            "stressEating",
+                            "Relación del estrés con comida o actividad",
+                          ],
+                          ["support", "Psicoterapia u otros apoyos"],
+                        ].map(([k, l]) => (
+                          <Field
+                            key={k}
+                            label={l}
+                            value={data.general[k]}
+                            onChange={(v: string) => set("general", k, v)}
+                          />
+                        ))}
+                        {[
+                          ["snoring", "Ronquidos"],
+                          [
+                            "breathingPauses",
+                            "Pausas respiratorias observadas",
+                          ],
+                          ["restorative", "Sueño reparador"],
+                        ].map(([k, l]) => (
+                          <Field
+                            key={k}
+                            label={l}
+                            options={[
+                              ["", "No preguntado"],
+                              ["Sí", "Sí"],
+                              ["No", "No"],
+                              ["No sabe", "No sabe"],
+                            ]}
+                            value={data.general[k]}
+                            onChange={(v: string) => set("general", k, v)}
+                          />
+                        ))}
+                      </div>
+                    </Card>
+                    <Activities
+                      values={data.activities}
+                      onChange={(v: any) => set("", "activities", v)}
+                    />
+                    <Drinks
+                      values={data.drinks}
+                      onChange={(
+                        values: any,
+                        total: number | null,
+                        water: number | null,
+                      ) =>
+                        change((d) => {
+                          d.drinks = values;
+                          d.habits.liquids = total ?? "";
+                          d.habits.water = water ?? "";
+                        })
+                      }
+                    />
+                    <Card title="Patrón de alimentación">
+                      <div className="cw-grid">
+                        {foodFields.map(([k, l, u]) => (
+                          <Field
+                            key={k}
+                            label={l + " (" + u + ")"}
+                            inputMode="decimal"
+                            value={data.habits[k]}
+                            onChange={(v: string) => set("habits", k, v)}
+                          />
+                        ))}
+                        {[
+                          [
+                            "portions",
+                            "Porciones aumentadas o fuera de lo acordado",
+                          ],
+                          ["sugars", "Azúcares simples y bebidas azucaradas"],
+                          ["social", "Eventos sociales y alcohol"],
+                          ["notes", "Otras dificultades alimentarias"],
+                        ].map(([k, l]) => (
+                          <Field
+                            key={k}
+                            label={l}
+                            type="textarea"
+                            value={data.foodNotes[k]}
+                            onChange={(v: string) => set("foodNotes", k, v)}
+                          />
+                        ))}
+                      </div>
+                    </Card>
+                    <Card
+                      title="Recordatorio de 24 horas"
+                      subtitle="Registra un día específico. El patrón habitual se describe por separado."
+                    >
+                      <div className="cw-grid">
+                        <Field
+                          label="Día recordado"
+                          type="date"
+                          value={data.recall.date}
+                          onChange={(v: string) => set("recall", "date", v)}
+                        />
+                        <Field
+                          label="Contexto del día"
+                          value={data.recall.context}
+                          hint="Oficina, teletrabajo, fin de semana, día de entrenamiento…"
+                          onChange={(v: string) => set("recall", "context", v)}
+                        />
+                      </div>
+                      {data.recall.meals.map((m: any, i: number) => (
+                        <div className="cw-meal" key={m.name}>
+                          <h3>{m.name}</h3>
+                          <div className="cw-grid">
+                            <Field
+                              label={m.name + ": hora"}
+                              type="time"
+                              value={m.time}
+                              onChange={(v: string) =>
+                                change((d) => {
+                                  d.recall.meals[i].time = v;
+                                })
+                              }
+                            />
+                            <Field
+                              label={m.name + ": alimentos y bebidas"}
+                              value={m.food}
+                              onChange={(v: string) =>
+                                change((d) => {
+                                  d.recall.meals[i].food = v;
+                                })
+                              }
+                            />
+                            <Field
+                              label={m.name + ": cantidad / medida casera"}
+                              value={m.amount}
+                              onChange={(v: string) =>
+                                change((d) => {
+                                  d.recall.meals[i].amount = v;
+                                })
+                              }
+                            />
+                            <Field
+                              label={m.name + ": preparación y agregados"}
+                              value={m.preparation}
+                              onChange={(v: string) =>
+                                change((d) => {
+                                  d.recall.meals[i].preparation = v;
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      <Field
+                        label="¿Fue un día habitual? Diferencias entre semana y fin de semana"
+                        type="textarea"
+                        value={data.recall.typical}
+                        onChange={(v: string) => set("recall", "typical", v)}
+                      />
+                    </Card>
+                  </>
+                )}
+                {tab === "Mediciones" && (
+                  <>
+                    <Card
+                      title="Mediciones de esta atención"
+                      subtitle="En online puedes registrar solo lo disponible; las cifras anteriores no se copian como mediciones nuevas."
+                    >
+                      <Field
+                        label="Procedencia de las mediciones"
+                        value={data.measurementSource}
+                        options={[
+                          ["", "Seleccionar"],
+                          ["clinic", "Medidas en consulta"],
+                          [
+                            "home_measured",
+                            "Medidas en casa con instrucciones",
+                          ],
+                          ["self_reported", "Informadas por el paciente"],
+                          ["device_estimate", "Estimación de dispositivo"],
+                        ]}
+                        onChange={(v: string) =>
+                          set("", "measurementSource", v)
+                        }
+                      />
+                      <div className="cw-grid">
+                        {measureFields.map(([k, l, u]) => (
+                          <Field
+                            key={k}
+                            label={l + " (" + u + ")"}
+                            inputMode="decimal"
+                            value={data.measurements[k]}
+                            onChange={(v: string) => set("measurements", k, v)}
+                          />
+                        ))}
+                      </div>
+                      <div className="cw-stat-row">
+                        <Stat
+                          label="IMC"
+                          value={
+                            num(data.measurements.weight)! > 0 &&
+                            num(data.measurements.height)! > 0
+                              ? num(data.measurements.weight)! /
+                                (num(data.measurements.height)! / 100) ** 2
+                              : null
+                          }
+                        />
+                        <Stat
+                          label="Cintura / cadera"
+                          value={
+                            num(data.measurements.waistWHO)! > 0 &&
+                            num(data.measurements.hip)! > 0
+                              ? num(data.measurements.waistWHO)! /
+                                num(data.measurements.hip)!
+                              : null
+                          }
+                        />
+                        <Stat
+                          label="Cintura / estatura"
+                          value={
+                            num(data.measurements.waistWHO)! > 0 &&
+                            num(data.measurements.height)! > 0
+                              ? num(data.measurements.waistWHO)! /
+                                num(data.measurements.height)!
+                              : null
+                          }
+                        />
+                      </div>
+                    </Card>
+                    <Card
+                      title="InBody, laboratorio y fotografías"
+                      subtitle="Se conservan la lectura de PDF con revisión, las fechas de muestra y los archivos privados."
+                    >
+                      <p>
+                        Los resultados ya cargados se incluyen en la evolución.
+                        Para agregar o revisar un PDF, abre la ficha de
+                        seguimiento.
+                      </p>
+                      <button onClick={() => leave("Atención actual")}>
+                        Abrir carga de PDF y resultados
+                      </button>
+                      <button onClick={() => leave("Evolución")}>
+                        Ver gráficos y seguimiento fotográfico
+                      </button>
+                      {currentInBody && (
+                        <p>
+                          InBody de esta atención: medición{" "}
+                          {display(currentInBody.date)} · grasa{" "}
+                          {format(currentInBody.data.fatPercent)} % · masa
+                          muscular {format(currentInBody.data.muscle)} kg.
+                        </p>
+                      )}
+                    </Card>
+                  </>
+                )}
+                {tab === "Energía y pauta" && (
+                  <>
+                    <Card
+                      title="Estimación energética"
+                      subtitle="Compara métodos y elige la referencia del plan. Los resultados son estimaciones."
+                    >
+                      <div className="cw-grid">
+                        <Field
+                          label="Fecha de nacimiento"
+                          type="date"
+                          value={data.demographics.birthDate}
+                          onChange={(v: string) =>
+                            set("demographics", "birthDate", v)
+                          }
+                        />
+                        <Field
+                          label="Edad (si no hay fecha de nacimiento)"
+                          value={data.demographics.age}
+                          inputMode="numeric"
+                          onChange={(v: string) =>
+                            set("demographics", "age", v)
+                          }
+                        />
+                        <Field
+                          label="Sexo para la ecuación"
+                          value={data.demographics.sex}
+                          options={[
+                            ["", "Seleccionar"],
+                            ["female", "Femenino"],
+                            ["male", "Masculino"],
+                          ]}
+                          onChange={(v: string) =>
+                            set("demographics", "sex", v)
+                          }
+                        />
+                        <Field
+                          label="Peso de referencia para cálculo (kg)"
+                          value={
+                            energy.referenceWeight ??
+                            data.measurements.weight ??
+                            currentInBody?.data.weight
+                          }
+                          inputMode="decimal"
+                          onChange={(v: string) =>
+                            set("energy", "referenceWeight", v)
+                          }
+                        />
+                        <Field
+                          label="Estatura de referencia para cálculo (cm)"
+                          value={
+                            energy.referenceHeight ??
+                            data.measurements.height ??
+                            currentInBody?.data.height
+                          }
+                          inputMode="decimal"
+                          onChange={(v: string) =>
+                            set("energy", "referenceHeight", v)
+                          }
+                        />
+                        <Field
+                          label="Grasa corporal para cálculo (%)"
+                          value={
+                            energy.fatPercent ?? currentInBody?.data.fatPercent
+                          }
+                          inputMode="decimal"
+                          onChange={(v: string) =>
+                            set("energy", "fatPercent", v)
+                          }
+                        />
+                        <Field
+                          label="Masa libre de grasa medida (kg, opcional)"
+                          value={energy.leanMass}
+                          inputMode="decimal"
+                          onChange={(v: string) => set("energy", "leanMass", v)}
+                        />
+                        <Field
+                          label="Factor de actividad (1–3)"
+                          value={energy.factor}
+                          inputMode="decimal"
+                          onChange={(v: string) => set("energy", "factor", v)}
+                        />
+                      </div>
+                      <div className="cw-table-wrap">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Ecuación</th>
+                              <th>Reposo (kcal/día)</th>
+                              <th>Con factor de actividad</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ["mifflinStJeor", "Mifflin–St Jeor"],
+                              [
+                                "harrisBenedictOriginal",
+                                "Harris–Benedict original",
+                              ],
+                              ["katchMcArdle", "Katch–McArdle"],
+                              ["cunningham1980", "Cunningham (1980)"],
+                            ].map(([key, label]) => (
+                              <tr key={key}>
+                                <th>{label}</th>
+                                <td>{format((rest as any)[key])}</td>
+                                <td>
+                                  {format(
+                                    (rest as any)[key] !== null &&
+                                      factor &&
+                                      factor >= 1 &&
+                                      factor <= 3
+                                      ? (rest as any)[key] * factor
+                                      : null,
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </Card>
+                    <Card
+                      title="Gasto por actividades semanales"
+                      subtitle="Usa actividades, no nombres de días. El total semanal se distribuye entre siete para obtener el promedio diario."
+                    >
+                      <Activities
+                        values={data.activities}
+                        nested
+                        onChange={(v: any) => set("", "activities", v)}
+                      />
+                      <label className="cw-check">
+                        <input
+                          type="checkbox"
+                          checked={energy.noExercise === true}
+                          onChange={(e) =>
+                            set("energy", "noExercise", e.target.checked)
+                          }
+                        />
+                        Paciente informa que no realiza ejercicio planificado.
+                      </label>
+                      <p className="cw-muted">
+                        Para calcular, completa los MET y la frecuencia de todas
+                        las actividades incluidas.
+                      </p>
+                      <div className="cw-stat-row">
+                        <Stat
+                          label="Ejercicio neto semanal"
+                          value={training?.netWeekly}
+                          unit="kcal/semana"
+                        />
+                        <Stat
+                          label="Ejercicio neto diario promedio"
+                          value={training?.netDaily}
+                          unit="kcal/día"
+                        />
+                      </div>
+                      <div className="cw-grid">
+                        <Field
+                          label="Ecuación de reposo para componentes"
+                          value={energy.restMethod || "mifflinStJeor"}
+                          options={[
+                            ["mifflinStJeor", "Mifflin–St Jeor"],
+                            ["harrisBenedictOriginal", "Harris–Benedict"],
+                            ["katchMcArdle", "Katch–McArdle"],
+                            ["cunningham1980", "Cunningham"],
+                          ]}
+                          onChange={(v: string) =>
+                            set("energy", "restMethod", v)
+                          }
+                        />
+                        <Field
+                          label="Pasos diarios fuera del ejercicio"
+                          value={energy.stepsOutside}
+                          inputMode="decimal"
+                          hint="Descuenta los pasos del entrenamiento que ya estimaste como ejercicio."
+                          onChange={(v: string) =>
+                            set("energy", "stepsOutside", v)
+                          }
+                        />
+                        <Field
+                          label="Termogénesis (% del gasto total)"
+                          value={energy.tef}
+                          inputMode="decimal"
+                          onChange={(v: string) => set("energy", "tef", v)}
+                        />
+                      </div>
+                      <label className="cw-check">
+                        <input
+                          type="checkbox"
+                          checked={energy.overlapReviewed === true}
+                          onChange={(e) =>
+                            set("energy", "overlapReviewed", e.target.checked)
+                          }
+                        />
+                        Revisé que los pasos y el ejercicio no estén contados
+                        dos veces.
+                      </label>
+                      <p className="cw-muted">
+                        NEAT aproximado: {format(neat)} kcal/día. Supuesto de
+                        caminata: 83 pasos/min y 2 MET netos. Ejercicio: MET
+                        menos 1 MET de reposo. Termogénesis aplicada al total.
+                      </p>
+                      <Stat
+                        label="Gasto total por componentes"
+                        value={components?.totalDaily}
+                        unit="kcal/día"
+                      />
+                    </Card>
+                    <Card title="Objetivo calórico y macronutrientes">
+                      <div className="cw-grid">
+                        <Field
+                          label="Método elegido para el plan"
+                          value={energy.method}
+                          options={[
+                            ["mifflinStJeor", "Mifflin × factor"],
+                            [
+                              "harrisBenedictOriginal",
+                              "Harris–Benedict × factor",
+                            ],
+                            ["katchMcArdle", "Katch–McArdle × factor"],
+                            ["cunningham1980", "Cunningham × factor"],
+                            ["components", "Cálculo por componentes"],
+                            ["manual", "Estimación definida en consulta"],
+                          ]}
+                          onChange={(v: string) => set("energy", "method", v)}
+                        />
+                        {energy.method === "manual" && (
+                          <Field
+                            label="Gasto estimado manual (kcal/día)"
+                            value={energy.manualTotal}
+                            inputMode="decimal"
+                            onChange={(v: string) =>
+                              set("energy", "manualTotal", v)
+                            }
+                          />
+                        )}
+                        <Field
+                          label="Ajuste energético (kcal/día)"
+                          value={energy.adjustment}
+                          inputMode="decimal"
+                          hint="Déficit negativo, superávit positivo, mantenimiento 0. Ej.: −500."
+                          onChange={(v: string) =>
+                            set("energy", "adjustment", v)
+                          }
+                        />
+                        <Field
+                          label="Peso de referencia para macros (kg)"
+                          value={energy.macroWeight ?? weight}
+                          inputMode="decimal"
+                          onChange={(v: string) =>
+                            set("energy", "macroWeight", v)
+                          }
+                        />
+                        <Field
+                          label="Proteínas: cantidad"
+                          value={energy.proteinValue}
+                          inputMode="decimal"
+                          onChange={(v: string) =>
+                            set("energy", "proteinValue", v)
+                          }
+                        />
+                        <Field
+                          label="Proteínas: unidad"
+                          value={energy.proteinUnit}
+                          options={[
+                            ["g_per_kg", "g/kg/día"],
+                            ["g_day", "g/día"],
+                          ]}
+                          onChange={(v: string) =>
+                            set("energy", "proteinUnit", v)
+                          }
+                        />
+                        <Field
+                          label="Grasas: cantidad"
+                          value={energy.fatValue}
+                          inputMode="decimal"
+                          onChange={(v: string) => set("energy", "fatValue", v)}
+                        />
+                        <Field
+                          label="Grasas: unidad"
+                          value={energy.fatUnit}
+                          options={[
+                            ["g_per_kg", "g/kg/día"],
+                            ["g_day", "g/día"],
+                          ]}
+                          onChange={(v: string) => set("energy", "fatUnit", v)}
+                        />
+                      </div>
+                      <div className="cw-stat-row">
+                        <Stat
+                          label="Gasto elegido"
+                          value={estimated}
+                          unit="kcal/día"
+                        />
+                        <Stat
+                          label="Ingesta objetivo"
+                          value={macro?.target}
+                          unit="kcal/día"
+                        />
+                        <Stat
+                          label="Proteínas"
+                          value={macro?.proteinG}
+                          unit="g/día"
+                        />
+                        <Stat label="Grasas" value={macro?.fatG} unit="g/día" />
+                        <Stat
+                          label="Carbohidratos"
+                          value={macro?.carbohydrateG}
+                          unit="g/día"
+                        />
+                      </div>
+                      {macro?.error && (
+                        <p className="cw-alert">{macro.error}</p>
+                      )}
+                    </Card>
+                    <Portions
+                      data={data}
+                      totals={exchange}
+                      targets={targets}
+                      change={change}
+                    />
+                  </>
+                )}
+                {tab === "Cierre" && (
+                  <>
+                    <Card title="Evaluación e indicaciones acordadas">
+                      <Field
+                        label="Evaluación / problemas identificados"
+                        type="textarea"
+                        value={data.closing.assessment}
+                        onChange={(v: string) =>
+                          set("closing", "assessment", v)
+                        }
+                      />
+                      <div className="cw-grid">
+                        <Field
+                          label="Estrategia alimentaria"
+                          value={data.closing.dietStrategy}
+                          options={[
+                            ["", "Seleccionar"],
+                            ...definitions.dietStrategies,
+                          ]}
+                          onChange={(v: string) =>
+                            set("closing", "dietStrategy", v)
+                          }
+                        />
+                        <Field
+                          label="Derivación a nutricionista u otro profesional"
+                          value={data.closing.referral}
+                          onChange={(v: string) =>
+                            set("closing", "referral", v)
+                          }
+                        />
+                        <Field
+                          label="Orientaciones alimentarias / material compartido"
+                          type="textarea"
+                          value={data.closing.dietNotes}
+                          onChange={(v: string) =>
+                            set("closing", "dietNotes", v)
+                          }
+                        />
+                        <Field
+                          label="Nuevas indicaciones de tratamiento"
+                          type="textarea"
+                          hint="Distingue cambios o nuevas prescripciones de los medicamentos en uso."
+                          value={data.closing.treatmentInstructions}
+                          onChange={(v: string) =>
+                            set("closing", "treatmentInstructions", v)
+                          }
+                        />
+                        <Field
+                          label="Meta mínima de pasos (pasos/día)"
+                          inputMode="numeric"
+                          value={data.closing.stepsMin}
+                          onChange={(v: string) =>
+                            set("closing", "stepsMin", v)
+                          }
+                        />
+                        <Field
+                          label="Meta ideal de pasos (pasos/día)"
+                          inputMode="numeric"
+                          value={data.closing.stepsIdeal}
+                          onChange={(v: string) =>
+                            set("closing", "stepsIdeal", v)
+                          }
+                        />
+                        <Field
+                          label="Meta fuerza (sesiones/semana)"
+                          inputMode="decimal"
+                          value={data.closing.strength}
+                          onChange={(v: string) =>
+                            set("closing", "strength", v)
+                          }
+                        />
+                        <Field
+                          label="Meta cardio (minutos/semana)"
+                          inputMode="numeric"
+                          value={data.closing.cardio}
+                          onChange={(v: string) => set("closing", "cardio", v)}
+                        />
+                        <Field
+                          label="Exámenes solicitados / pendientes"
+                          type="textarea"
+                          value={data.closing.exams}
+                          onChange={(v: string) => set("closing", "exams", v)}
+                        />
+                        <Field
+                          label="Otras indicaciones"
+                          type="textarea"
+                          value={data.closing.notes}
+                          onChange={(v: string) => set("closing", "notes", v)}
+                        />
+                        <Field
+                          label="Próximo control recomendado"
+                          type="date"
+                          value={data.closing.nextVisit}
+                          onChange={(v: string) =>
+                            set("closing", "nextVisit", v)
+                          }
+                        />
+                        <Field
+                          label="Cita agendada en Reservo (si ya existe)"
+                          type="date"
+                          value={data.closing.bookedVisit}
+                          onChange={(v: string) =>
+                            set("closing", "bookedVisit", v)
+                          }
+                        />
+                      </div>
+                      <button
+                        onClick={() =>
+                          set(
+                            "closing",
+                            "nextVisit",
+                            recommendedNextVisit(date),
+                          )
+                        }
+                      >
+                        Sugerir control en 6 semanas
+                      </button>
+                    </Card>
+                    <div className="cw-grid">
+                      <Card
+                        title="Texto para la ficha de Reservo"
+                        action={<Copy text={text.clinical} />}
+                      >
+                        <textarea
+                          aria-label="Resumen clínico para copiar"
+                          readOnly
+                          rows={16}
+                          value={text.clinical}
+                        />
+                      </Card>
+                      <Card
+                        title="Resumen para el paciente"
+                        subtitle="Revisa el contenido antes de compartirlo."
+                        action={<Copy text={text.patientText} />}
+                      >
+                        <textarea
+                          aria-label="Resumen para el paciente"
+                          readOnly
+                          rows={16}
+                          value={text.patientText}
+                        />
+                        {patient.phone && (
+                          <a
+                            className="cw-button"
+                            href={
+                              "https://wa.me/" +
+                              patient.phone.replace(/\D/g, "") +
+                              "?text=" +
+                              encodeURIComponent(text.patientText)
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Preparar WhatsApp
+                          </a>
+                        )}
+                        <p className="cw-muted">
+                          Abrir WhatsApp prepara el mensaje; tú decides cuándo
+                          enviarlo.
+                        </p>
+                      </Card>
+                    </div>
+                  </>
+                )}
+                {tab === "Evolución" && (
+                  <Evolution
+                    bundle={bundle}
+                    date={date}
+                    choose={(d: string) => {
+                      if (choose(d) !== false) setTab("Consulta");
+                    }}
+                    onLegacy={() => leave("Evolución")}
+                  />
+                )}
+                {tab === "Plantillas" && (
+                  <Library
+                    patient={patient}
+                    date={date}
+                    onDirty={setLibraryDirty}
+                  />
+                )}
+                <details className="cw-card cw-history-list">
+                  <summary>Registros previos ({allDates.length})</summary>
+                  <div className="cw-date-list">
+                    {allDates.map((d, i) => (
+                      <button
+                        key={d}
+                        aria-pressed={date === d}
+                        onClick={() => choose(d)}
+                      >
+                        {i === 0 ? "Atención inicial" : "Control " + i} ·{" "}
+                        {display(d)}
+                      </button>
                     ))}
                   </div>
-                  <div className="cw-stat-row">
-                    <Stat
-                      label="IMC"
-                      value={
-                        num(data.measurements.weight)! > 0 &&
-                        num(data.measurements.height)! > 0
-                          ? num(data.measurements.weight)! /
-                            (num(data.measurements.height)! / 100) ** 2
-                          : null
-                      }
-                    />
-                    <Stat
-                      label="Cintura / cadera"
-                      value={
-                        num(data.measurements.waistWHO)! > 0 &&
-                        num(data.measurements.hip)! > 0
-                          ? num(data.measurements.waistWHO)! /
-                            num(data.measurements.hip)!
-                          : null
-                      }
-                    />
-                    <Stat
-                      label="Cintura / estatura"
-                      value={
-                        num(data.measurements.waistWHO)! > 0 &&
-                        num(data.measurements.height)! > 0
-                          ? num(data.measurements.waistWHO)! /
-                            num(data.measurements.height)!
-                          : null
-                      }
-                    />
-                  </div>
-                </Card>
-                <Card
-                  title="InBody, laboratorio y fotografías"
-                  subtitle="Se conservan la lectura de PDF con revisión, las fechas de muestra y los archivos privados."
-                >
-                  <p>
-                    Los resultados ya cargados se incluyen en la evolución. Para
-                    agregar o revisar un PDF, abre la ficha de seguimiento.
-                  </p>
-                  <button onClick={() => leave("Atención actual")}>
-                    Abrir carga de PDF y resultados
-                  </button>
-                  <button onClick={() => leave("Evolución")}>
-                    Ver gráficos y seguimiento fotográfico
-                  </button>
-                  {currentInBody && (
-                    <p>
-                      InBody de esta atención: medición{" "}
-                      {display(currentInBody.date)} · grasa{" "}
-                      {format(currentInBody.data.fatPercent)} % · masa muscular{" "}
-                      {format(currentInBody.data.muscle)} kg.
-                    </p>
-                  )}
-                </Card>
-              </>
-            )}
-            {tab === "Energía y pauta" && (
-              <>
-                <Card
-                  title="Estimación energética"
-                  subtitle="Compara métodos y elige la referencia del plan. Los resultados son estimaciones."
-                >
-                  <div className="cw-grid">
-                    <Field
-                      label="Fecha de nacimiento"
-                      type="date"
-                      value={data.demographics.birthDate}
-                      onChange={(v: string) =>
-                        set("demographics", "birthDate", v)
-                      }
-                    />
-                    <Field
-                      label="Edad (si no hay fecha de nacimiento)"
-                      value={data.demographics.age}
-                      inputMode="numeric"
-                      onChange={(v: string) => set("demographics", "age", v)}
-                    />
-                    <Field
-                      label="Sexo para la ecuación"
-                      value={data.demographics.sex}
-                      options={[
-                        ["", "Seleccionar"],
-                        ["female", "Femenino"],
-                        ["male", "Masculino"],
-                      ]}
-                      onChange={(v: string) => set("demographics", "sex", v)}
-                    />
-                    <Field
-                      label="Peso de referencia para cálculo (kg)"
-                      value={
-                        energy.referenceWeight ??
-                        data.measurements.weight ??
-                        currentInBody?.data.weight
-                      }
-                      inputMode="decimal"
-                      onChange={(v: string) =>
-                        set("energy", "referenceWeight", v)
-                      }
-                    />
-                    <Field
-                      label="Estatura de referencia para cálculo (cm)"
-                      value={
-                        energy.referenceHeight ??
-                        data.measurements.height ??
-                        currentInBody?.data.height
-                      }
-                      inputMode="decimal"
-                      onChange={(v: string) =>
-                        set("energy", "referenceHeight", v)
-                      }
-                    />
-                    <Field
-                      label="Grasa corporal para cálculo (%)"
-                      value={
-                        energy.fatPercent ?? currentInBody?.data.fatPercent
-                      }
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "fatPercent", v)}
-                    />
-                    <Field
-                      label="Masa libre de grasa medida (kg, opcional)"
-                      value={energy.leanMass}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "leanMass", v)}
-                    />
-                    <Field
-                      label="Factor de actividad (1–3)"
-                      value={energy.factor}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "factor", v)}
-                    />
-                  </div>
-                  <div className="cw-table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Ecuación</th>
-                          <th>Reposo (kcal/día)</th>
-                          <th>Con factor de actividad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ["mifflinStJeor", "Mifflin–St Jeor"],
-                          [
-                            "harrisBenedictOriginal",
-                            "Harris–Benedict original",
-                          ],
-                          ["katchMcArdle", "Katch–McArdle"],
-                          ["cunningham1980", "Cunningham (1980)"],
-                        ].map(([key, label]) => (
-                          <tr key={key}>
-                            <th>{label}</th>
-                            <td>{format((rest as any)[key])}</td>
-                            <td>
-                              {format(
-                                (rest as any)[key] !== null &&
-                                  factor &&
-                                  factor >= 1 &&
-                                  factor <= 3
-                                  ? (rest as any)[key] * factor
-                                  : null,
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-                <Card
-                  title="Gasto por actividades semanales"
-                  subtitle="Usa actividades, no nombres de días. El total semanal se distribuye entre siete para obtener el promedio diario."
-                >
-                  <Activities
-                    values={data.activities}
-                    nested
-                    onChange={(v: any) => set("", "activities", v)}
-                  />
-                  <label className="cw-check">
-                    <input
-                      type="checkbox"
-                      checked={energy.noExercise === true}
-                      onChange={(e) =>
-                        set("energy", "noExercise", e.target.checked)
-                      }
-                    />
-                    Paciente informa que no realiza ejercicio planificado.
-                  </label>
-                  <p className="cw-muted">
-                    Para calcular, completa los MET y la frecuencia de todas las
-                    actividades incluidas.
-                  </p>
-                  <div className="cw-stat-row">
-                    <Stat
-                      label="Ejercicio neto semanal"
-                      value={training?.netWeekly}
-                      unit="kcal/semana"
-                    />
-                    <Stat
-                      label="Ejercicio neto diario promedio"
-                      value={training?.netDaily}
-                      unit="kcal/día"
-                    />
-                  </div>
-                  <div className="cw-grid">
-                    <Field
-                      label="Ecuación de reposo para componentes"
-                      value={energy.restMethod || "mifflinStJeor"}
-                      options={[
-                        ["mifflinStJeor", "Mifflin–St Jeor"],
-                        ["harrisBenedictOriginal", "Harris–Benedict"],
-                        ["katchMcArdle", "Katch–McArdle"],
-                        ["cunningham1980", "Cunningham"],
-                      ]}
-                      onChange={(v: string) => set("energy", "restMethod", v)}
-                    />
-                    <Field
-                      label="Pasos diarios fuera del ejercicio"
-                      value={energy.stepsOutside}
-                      inputMode="decimal"
-                      hint="Descuenta los pasos del entrenamiento que ya estimaste como ejercicio."
-                      onChange={(v: string) => set("energy", "stepsOutside", v)}
-                    />
-                    <Field
-                      label="Termogénesis (% del gasto total)"
-                      value={energy.tef}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "tef", v)}
-                    />
-                  </div>
-                  <label className="cw-check">
-                    <input
-                      type="checkbox"
-                      checked={energy.overlapReviewed === true}
-                      onChange={(e) =>
-                        set("energy", "overlapReviewed", e.target.checked)
-                      }
-                    />
-                    Revisé que los pasos y el ejercicio no estén contados dos
-                    veces.
-                  </label>
-                  <p className="cw-muted">
-                    NEAT aproximado: {format(neat)} kcal/día. Supuesto de
-                    caminata: 83 pasos/min y 2 MET netos. Ejercicio: MET menos 1
-                    MET de reposo. Termogénesis aplicada al total.
-                  </p>
-                  <Stat
-                    label="Gasto total por componentes"
-                    value={components?.totalDaily}
-                    unit="kcal/día"
-                  />
-                </Card>
-                <Card title="Objetivo calórico y macronutrientes">
-                  <div className="cw-grid">
-                    <Field
-                      label="Método elegido para el plan"
-                      value={energy.method}
-                      options={[
-                        ["mifflinStJeor", "Mifflin × factor"],
-                        ["harrisBenedictOriginal", "Harris–Benedict × factor"],
-                        ["katchMcArdle", "Katch–McArdle × factor"],
-                        ["cunningham1980", "Cunningham × factor"],
-                        ["components", "Cálculo por componentes"],
-                        ["manual", "Estimación definida en consulta"],
-                      ]}
-                      onChange={(v: string) => set("energy", "method", v)}
-                    />
-                    {energy.method === "manual" && (
-                      <Field
-                        label="Gasto estimado manual (kcal/día)"
-                        value={energy.manualTotal}
-                        inputMode="decimal"
-                        onChange={(v: string) =>
-                          set("energy", "manualTotal", v)
-                        }
-                      />
-                    )}
-                    <Field
-                      label="Ajuste energético (kcal/día)"
-                      value={energy.adjustment}
-                      inputMode="decimal"
-                      hint="Déficit negativo, superávit positivo, mantenimiento 0. Ej.: −500."
-                      onChange={(v: string) => set("energy", "adjustment", v)}
-                    />
-                    <Field
-                      label="Peso de referencia para macros (kg)"
-                      value={energy.macroWeight ?? weight}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "macroWeight", v)}
-                    />
-                    <Field
-                      label="Proteínas: cantidad"
-                      value={energy.proteinValue}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "proteinValue", v)}
-                    />
-                    <Field
-                      label="Proteínas: unidad"
-                      value={energy.proteinUnit}
-                      options={[
-                        ["g_per_kg", "g/kg/día"],
-                        ["g_day", "g/día"],
-                      ]}
-                      onChange={(v: string) => set("energy", "proteinUnit", v)}
-                    />
-                    <Field
-                      label="Grasas: cantidad"
-                      value={energy.fatValue}
-                      inputMode="decimal"
-                      onChange={(v: string) => set("energy", "fatValue", v)}
-                    />
-                    <Field
-                      label="Grasas: unidad"
-                      value={energy.fatUnit}
-                      options={[
-                        ["g_per_kg", "g/kg/día"],
-                        ["g_day", "g/día"],
-                      ]}
-                      onChange={(v: string) => set("energy", "fatUnit", v)}
-                    />
-                  </div>
-                  <div className="cw-stat-row">
-                    <Stat
-                      label="Gasto elegido"
-                      value={estimated}
-                      unit="kcal/día"
-                    />
-                    <Stat
-                      label="Ingesta objetivo"
-                      value={macro?.target}
-                      unit="kcal/día"
-                    />
-                    <Stat
-                      label="Proteínas"
-                      value={macro?.proteinG}
-                      unit="g/día"
-                    />
-                    <Stat label="Grasas" value={macro?.fatG} unit="g/día" />
-                    <Stat
-                      label="Carbohidratos"
-                      value={macro?.carbohydrateG}
-                      unit="g/día"
-                    />
-                  </div>
-                  {macro?.error && <p className="cw-alert">{macro.error}</p>}
-                </Card>
-                <Portions
-                  data={data}
-                  totals={exchange}
-                  targets={targets}
-                  change={change}
-                />
-              </>
-            )}
-            {tab === "Cierre" && (
-              <>
-                <Card title="Evaluación e indicaciones acordadas">
-                  <Field
-                    label="Evaluación / problemas identificados"
-                    type="textarea"
-                    value={data.closing.assessment}
-                    onChange={(v: string) => set("closing", "assessment", v)}
-                  />
-                  <div className="cw-grid">
-                    <Field
-                      label="Estrategia alimentaria"
-                      value={data.closing.dietStrategy}
-                      options={[
-                        ["", "Seleccionar"],
-                        ...definitions.dietStrategies,
-                      ]}
-                      onChange={(v: string) =>
-                        set("closing", "dietStrategy", v)
-                      }
-                    />
-                    <Field
-                      label="Derivación a nutricionista u otro profesional"
-                      value={data.closing.referral}
-                      onChange={(v: string) => set("closing", "referral", v)}
-                    />
-                    <Field
-                      label="Orientaciones alimentarias / material compartido"
-                      type="textarea"
-                      value={data.closing.dietNotes}
-                      onChange={(v: string) => set("closing", "dietNotes", v)}
-                    />
-                    <Field
-                      label="Nuevas indicaciones de tratamiento"
-                      type="textarea"
-                      hint="Distingue cambios o nuevas prescripciones de los medicamentos en uso."
-                      value={data.closing.treatmentInstructions}
-                      onChange={(v: string) =>
-                        set("closing", "treatmentInstructions", v)
-                      }
-                    />
-                    <Field
-                      label="Meta mínima de pasos (pasos/día)"
-                      inputMode="numeric"
-                      value={data.closing.stepsMin}
-                      onChange={(v: string) => set("closing", "stepsMin", v)}
-                    />
-                    <Field
-                      label="Meta ideal de pasos (pasos/día)"
-                      inputMode="numeric"
-                      value={data.closing.stepsIdeal}
-                      onChange={(v: string) => set("closing", "stepsIdeal", v)}
-                    />
-                    <Field
-                      label="Meta fuerza (sesiones/semana)"
-                      inputMode="decimal"
-                      value={data.closing.strength}
-                      onChange={(v: string) => set("closing", "strength", v)}
-                    />
-                    <Field
-                      label="Meta cardio (minutos/semana)"
-                      inputMode="numeric"
-                      value={data.closing.cardio}
-                      onChange={(v: string) => set("closing", "cardio", v)}
-                    />
-                    <Field
-                      label="Exámenes solicitados / pendientes"
-                      type="textarea"
-                      value={data.closing.exams}
-                      onChange={(v: string) => set("closing", "exams", v)}
-                    />
-                    <Field
-                      label="Otras indicaciones"
-                      type="textarea"
-                      value={data.closing.notes}
-                      onChange={(v: string) => set("closing", "notes", v)}
-                    />
-                    <Field
-                      label="Próximo control recomendado"
-                      type="date"
-                      value={data.closing.nextVisit}
-                      onChange={(v: string) => set("closing", "nextVisit", v)}
-                    />
-                    <Field
-                      label="Cita agendada en Reservo (si ya existe)"
-                      type="date"
-                      value={data.closing.bookedVisit}
-                      onChange={(v: string) => set("closing", "bookedVisit", v)}
-                    />
-                  </div>
-                  <button
-                    onClick={() =>
-                      set("closing", "nextVisit", recommendedNextVisit(date))
-                    }
-                  >
-                    Sugerir control en 6 semanas
-                  </button>
-                </Card>
-                <div className="cw-grid">
-                  <Card
-                    title="Texto para la ficha de Reservo"
-                    action={<Copy text={text.clinical} />}
-                  >
-                    <textarea
-                      aria-label="Resumen clínico para copiar"
-                      readOnly
-                      rows={16}
-                      value={text.clinical}
-                    />
-                  </Card>
-                  <Card
-                    title="Resumen para el paciente"
-                    subtitle="Revisa el contenido antes de compartirlo."
-                    action={<Copy text={text.patientText} />}
-                  >
-                    <textarea
-                      aria-label="Resumen para el paciente"
-                      readOnly
-                      rows={16}
-                      value={text.patientText}
-                    />
-                    {patient.phone && (
-                      <a
-                        className="cw-button"
-                        href={
-                          "https://wa.me/" +
-                          patient.phone.replace(/\D/g, "") +
-                          "?text=" +
-                          encodeURIComponent(text.patientText)
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Preparar WhatsApp
-                      </a>
-                    )}
-                    <p className="cw-muted">
-                      Abrir WhatsApp prepara el mensaje; tú decides cuándo
-                      enviarlo.
-                    </p>
-                  </Card>
-                </div>
-              </>
-            )}
-            {tab === "Evolución" && (
-              <Evolution
-                bundle={bundle}
-                date={date}
-                choose={(d: string) => {
-                  if (choose(d) !== false) setTab("Consulta");
-                }}
-                onLegacy={() => leave("Evolución")}
-              />
-            )}
-            {tab === "Plantillas" && (
-              <Library
-                patient={patient}
-                date={date}
-                onDirty={setLibraryDirty}
-              />
-            )}
-            <details className="cw-card cw-history-list">
-              <summary>Registros previos ({allDates.length})</summary>
-              <div className="cw-date-list">
-                {allDates.map((d, i) => (
-                  <button
-                    key={d}
-                    aria-pressed={date === d}
-                    onClick={() => choose(d)}
-                  >
-                    {i === 0 ? "Atención inicial" : "Control " + i} ·{" "}
-                    {display(d)}
-                  </button>
-                ))}
+                </details>
               </div>
-            </details>
+            </div>
             <footer className="cw-footer">
               <span>
+                <strong className="cw-footer-patient">{patient.name}</strong>
                 {dirty
                   ? "Cambios sin guardar"
                   : version

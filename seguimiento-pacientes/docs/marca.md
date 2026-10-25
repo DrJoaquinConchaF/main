@@ -13,6 +13,6 @@ Paleta aproximada a partir de la publicación de marca compartida por el profesi
 
 Validación: compilación, 20 pruebas funcionales y 2 comprobaciones del HTML aprobadas; revisión visual móvil y comprobación de estilos calculados del acceso en modo claro y oscuro. Contraste del botón principal claro: 9,27:1; texto principal: 14,6:1; botón oscuro: 8,4:1. HTTPS confirma los recursos nuevos y rechazo anónimo con 401 de las rutas privadas.
 
-Cambio exclusivamente visual. Sin modificaciones de lógica clínica, migraciones, pacientes, archivos, secretos o servicios. Publicado en el Worker existente, versión `95e5c394-cd2a-450c-934c-cd621831bc7b`.
+Cambio exclusivamente visual. Sin modificaciones de lógica clínica, migraciones, pacientes, archivos, secretos o servicios. Publicado en el Worker existente, versión `85b86098-0982-4f05-80d4-29ffe977c74a`.
 
 El símbolo anterior «+» del acceso y encabezado se sustituye por un monograma tipográfico JC escalonado, basado en la imagen facilitada. Incluye etiqueta accesible con el nombre del profesional y adaptación al modo oscuro. Compilación y revisión visual en móvil aprobadas; recursos publicados verificados por HTTPS.

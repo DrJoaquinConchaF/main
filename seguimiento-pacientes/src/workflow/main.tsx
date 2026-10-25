@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { Workspace } from "./workspace";
 import "./style.css";
+import "./design.css";
 const host = document.getElementById("clinical-root")!;
 const root = createRoot(host);
 let current: any = null,
