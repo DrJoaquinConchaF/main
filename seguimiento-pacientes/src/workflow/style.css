@@ -1,3 +1,5 @@
+@import "./brand.css";
+
 body.clinical-open #root {
   display: none;
 }
@@ -8,12 +10,12 @@ body.clinical-open {
   display: none;
 }
 .cw {
-  --cw-bg: #f3f7f8;
-  --cw-surface: #fff;
-  --cw-ink: #123342;
-  --cw-muted: #607887;
-  --cw-border: #d9e5e9;
-  --cw-accent: #087f94;
+  --cw-bg: var(--brand-bg);
+  --cw-surface: var(--brand-surface);
+  --cw-ink: var(--brand-text);
+  --cw-muted: var(--brand-muted);
+  --cw-border: var(--brand-border);
+  --cw-accent: var(--brand-accent);
   position: fixed;
   inset: 0;
   z-index: 500;
@@ -75,11 +77,11 @@ body.clinical-open {
 .cw button:hover,
 .cw .cw-button:hover {
   border-color: var(--cw-accent);
-  background: #edf7f9;
+  background: var(--brand-soft);
 }
 .cw button:focus-visible,
 .cw a:focus-visible {
-  outline: 3px solid #49b5ca;
+  outline: 3px solid var(--brand-focus);
   outline-offset: 3px;
 }
 .cw button:disabled {
@@ -89,7 +91,7 @@ body.clinical-open {
 .cw button.cw-primary,
 .cw .cw-primary {
   background: var(--cw-accent);
-  color: #fff;
+  color: var(--brand-on-accent);
   border-color: var(--cw-accent);
   font-weight: 650;
 }
@@ -162,7 +164,7 @@ body.clinical-open {
 .cw-nav button[aria-current="page"],
 .cw-pills button[aria-pressed="true"] {
   background: var(--cw-accent);
-  color: #fff;
+  color: var(--brand-on-accent);
   border-color: var(--cw-accent);
 }
 .cw-card {
@@ -213,7 +215,7 @@ body.clinical-open {
   font: inherit;
   font-weight: 400;
   font-size: 15px;
-  border: 1px solid var(--cw-border);
+  border: 1px solid var(--brand-control-border);
   background: var(--cw-surface);
   color: var(--cw-ink);
   padding: 12px;
@@ -226,7 +228,7 @@ body.clinical-open {
 .cw-field select:focus,
 .cw-table-wrap input:focus {
   border-color: var(--cw-accent);
-  box-shadow: 0 0 0 3px #0796ac20;
+  box-shadow: 0 0 0 3px #881b3a24;
 }
 .cw textarea {
   resize: vertical;
@@ -381,7 +383,7 @@ body.clinical-open {
 .cw-date-list button[aria-pressed="true"] {
   border-color: var(--cw-accent);
   color: var(--cw-accent);
-  background: #eaf6f8;
+  background: var(--brand-soft);
 }
 .cw-chart {
   height: 300px;
@@ -415,7 +417,7 @@ body.clinical-open {
   bottom: -1px;
   background: var(--cw-surface);
   border: 1px solid var(--cw-border);
-  box-shadow: 0 -5px 20px #143a4810;
+  box-shadow: 0 -5px 20px #40172710;
   border-radius: 14px;
   padding: 15px 20px;
   display: flex;
@@ -529,19 +531,19 @@ body.clinical-open {
 }
 @media (prefers-color-scheme: dark) {
   .cw {
-    --cw-bg: #101f29;
-    --cw-surface: #192d39;
-    --cw-ink: #e4eef4;
-    --cw-muted: #a7bdc9;
-    --cw-border: #35505f;
-    --cw-accent: #138ca2;
+    --cw-bg: var(--brand-bg);
+    --cw-surface: var(--brand-surface);
+    --cw-ink: var(--brand-text);
+    --cw-muted: var(--brand-muted);
+    --cw-border: var(--brand-border);
+    --cw-accent: var(--brand-accent);
   }
   .cw button:hover {
-    background: #243e4b;
+    background: var(--brand-soft);
   }
   .cw-date-list button[aria-pressed="true"] {
-    background: #234656;
-    color: #9ddbec;
+    background: var(--brand-soft);
+    color: var(--brand-accent);
   }
   .cw-alert {
     background: #44242e;

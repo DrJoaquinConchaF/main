@@ -1,0 +1,85 @@
+/* Palette approximated from the clinician's supplied brand publication. */
+:root {
+  --brand-bg: #fef8f8;
+  --brand-surface: #ffffff;
+  --brand-text: #401727;
+  --brand-muted: #765863;
+  --brand-border: #e6d1d9;
+  --brand-control-border: #b08595;
+  --brand-accent: #881b3a;
+  --brand-accent-hover: #6e102d;
+  --brand-on-accent: #ffffff;
+  --brand-soft: #f4e0e6;
+  --brand-focus: #aa3458;
+  --bg: var(--brand-bg);
+  --surface: var(--brand-surface);
+  --text: var(--brand-text);
+  --muted: var(--brand-muted);
+  --border: var(--brand-border);
+  --accent: var(--brand-accent);
+  --soft: var(--brand-soft);
+  color: var(--brand-text);
+  background: var(--brand-bg);
+}
+body {
+  background: var(--brand-bg);
+  color: var(--brand-text);
+}
+.primary,
+.brand-mark {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+  color: var(--brand-on-accent);
+}
+.primary:hover {
+  background: var(--brand-accent-hover);
+  color: var(--brand-on-accent);
+}
+:focus-visible {
+  outline-color: var(--brand-focus);
+}
+input,
+textarea,
+select {
+  border-color: var(--brand-control-border);
+}
+.patient.active {
+  border-color: var(--brand-control-border);
+}
+.recharts-line .recharts-line-curve {
+  stroke: var(--brand-accent);
+}
+.recharts-line .recharts-dot {
+  stroke: var(--brand-accent);
+  fill: var(--brand-accent);
+}
+.recharts-cartesian-axis-tick-value {
+  fill: var(--brand-muted);
+}
+.recharts-cartesian-grid line {
+  stroke: var(--brand-border);
+}
+.recharts-default-tooltip {
+  background-color: var(--brand-surface) !important;
+  color: var(--brand-text) !important;
+  border-color: var(--brand-control-border) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand-bg: #1e151b;
+    --brand-surface: #2c1d25;
+    --brand-text: #f8ecf0;
+    --brand-muted: #cdb5bf;
+    --brand-border: #62444f;
+    --brand-control-border: #b9899e;
+    --brand-accent: #f0a4bd;
+    --brand-accent-hover: #f6b9cc;
+    --brand-on-accent: #39121f;
+    --brand-soft: #402832;
+    --brand-focus: #f1a8c0;
+  }
+}
+.recharts-tooltip-item,
+.recharts-tooltip-label {
+  color: var(--brand-text) !important;
+}

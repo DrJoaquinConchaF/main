@@ -1657,7 +1657,11 @@ function WeightHistory({ values, onChange }: any) {
                   "Edad " + age + " · " + (p[0]?.payload?.event || "")
                 }
               />
-              <Line dataKey="weight" stroke="#07849c" strokeWidth={2} />
+              <Line
+                dataKey="weight"
+                stroke="var(--brand-accent)"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -2166,7 +2170,7 @@ function Evolution({ bundle, date, choose, onLegacy }: any) {
                 />
                 <Line
                   dataKey="value"
-                  stroke="#07849c"
+                  stroke="var(--brand-accent)"
                   strokeWidth={3}
                   dot={{ r: 4 }}
                 />

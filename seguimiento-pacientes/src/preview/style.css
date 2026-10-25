@@ -1,7 +1,7 @@
 body.preview-mode {
   margin: 0;
-  background: #f3f7f8;
-  color: #123342;
+  background: var(--brand-bg);
+  color: var(--brand-text);
   font-family:
     system-ui,
     -apple-system,
@@ -57,7 +57,7 @@ body.preview-mode {
   line-height: 1.75;
 }
 .preview-eyebrow {
-  color: #087f94;
+  color: var(--brand-accent);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.6px;
@@ -74,24 +74,24 @@ body.preview-mode {
   gap: 8px;
   text-align: left;
   padding: 20px;
-  border: 1px solid #d9e5e9;
+  border: 1px solid var(--brand-border);
   border-radius: 12px;
-  background: #fff;
-  color: #123342;
+  background: var(--brand-surface);
+  color: var(--brand-text);
   cursor: pointer;
   font: inherit;
 }
 .preview-cards button:hover {
-  border-color: #087f94;
+  border-color: var(--brand-accent);
 }
 .preview-cards span {
   font-size: 13px;
-  color: #607887;
+  color: var(--brand-muted);
 }
 .preview-new {
   padding: 13px 20px;
-  background: #087f94;
-  color: white;
+  background: var(--brand-accent);
+  color: var(--brand-on-accent);
   border: 0;
   border-radius: 9px;
   font: inherit;
@@ -102,15 +102,15 @@ body.preview-mode {
   margin-top: 32px;
 }
 .preview-message {
-  background: #e5f3f6;
+  background: var(--brand-soft);
   padding: 16px;
   border-radius: 10px;
 }
 .preview-note {
   padding: 18px;
-  border: 1px solid #d9e5e9;
+  border: 1px solid var(--brand-border);
   border-radius: 12px;
-  color: #607887;
+  color: var(--brand-muted);
   font-size: 13px;
 }
 .preview-mode .cw .cw-top {
