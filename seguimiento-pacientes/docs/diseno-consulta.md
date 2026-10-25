@@ -8,8 +8,8 @@ Se utiliza el burdeos de marca y el monograma JC, con tonos secundarios rosa, me
 - Las tarjetas utilizan los datos de la atención seleccionada y muestran «Por registrar» cuando faltan. El peso de referencia energético no se muestra como medición. Si se toma del InBody asociado y la fecha difiere, se informa la fecha de medición.
 - Se conserva el registro directo por fecha, las confirmaciones de cambios sin guardar, el historial desplegable, los formularios y todos los cálculos existentes.
 
-Implementación: `src/workflow/visuals.tsx` y `design.css`, compartidos por la app y el HTML de demostración. Iconos SVG locales; sin recursos externos ni nuevos servicios. Modo claro/oscuro y reducción de movimiento compatibles.
+Implementación: `src/workflow/visuals.tsx` y `design.css`, compartidos por la app y el HTML de demostración. Iconos SVG locales; sin recursos externos ni nuevos servicios. Tema claro de marca por defecto, incluso con sistema oscuro; reducción de movimiento compatible.
 
-Validación: compilación TypeScript/Vite, 20 pruebas funcionales y 2 del HTML aprobadas. Las comprobaciones del HTML incluyen navegación mediante tarjeta, actualización de métricas sin perder el borrador, selector móvil y valores pendientes al abrir una fecha nueva. Revisión visual a 390/1280 px en claro y 360 px en oscuro; sin desbordamiento horizontal. Pruebas con datos aislados, sin escrituras en los pacientes reales.
+Validación: compilación TypeScript/Vite, 25 pruebas funcionales y 2 del HTML aprobadas. Las comprobaciones del HTML incluyen navegación mediante tarjeta, actualización de métricas sin perder el borrador, selector móvil y valores pendientes al abrir una fecha nueva. Revisión visual a 390/1280 px en claro y 360 px en oscuro; sin desbordamiento horizontal. Pruebas con datos aislados, sin escrituras en los pacientes reales.
 
-Publicado en el Worker existente, versión `85b86098-0982-4f05-80d4-29ffe977c74a`. Recursos públicos idénticos a la compilación local comprobados por HTTPS; rutas privadas rechazan acceso anónimo con 401.
+Publicado en el Worker existente, versión `84c567a6-78d8-4661-ac3b-1d29a86a10f4`. Recursos públicos idénticos a la compilación local comprobados por HTTPS; rutas privadas rechazan acceso anónimo con 401.

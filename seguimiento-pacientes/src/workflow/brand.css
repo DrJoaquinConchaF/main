@@ -64,21 +64,7 @@ select {
   color: var(--brand-text) !important;
   border-color: var(--brand-control-border) !important;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --brand-bg: #1e151b;
-    --brand-surface: #2c1d25;
-    --brand-text: #f8ecf0;
-    --brand-muted: #cdb5bf;
-    --brand-border: #62444f;
-    --brand-control-border: #b9899e;
-    --brand-accent: #f0a4bd;
-    --brand-accent-hover: #f6b9cc;
-    --brand-on-accent: #39121f;
-    --brand-soft: #402832;
-    --brand-focus: #f1a8c0;
-  }
-}
+
 .recharts-tooltip-item,
 .recharts-tooltip-label {
   color: var(--brand-text) !important;
@@ -113,4 +99,26 @@ select {
   font-size: 30px;
   left: 18px;
   top: 14px;
+}
+
+/* The brand is light by default, including when the phone uses dark mode. */
+:root {
+  color-scheme: light;
+  --danger: #b52d40;
+  --success: #176d50;
+}
+.success {
+  background: #e8f7ef;
+  border-color: #abdcc1;
+  color: #166b43;
+}
+.error {
+  background: #fff0f2;
+  border-color: #f7b8c0;
+  color: #a62137;
+}
+.danger {
+  background: #b52d40;
+  color: #fff;
+  border-color: #b52d40;
 }

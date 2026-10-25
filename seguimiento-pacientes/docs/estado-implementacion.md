@@ -23,7 +23,7 @@ La autorización OAuth con la cuenta del propietario se completó correctamente.
 ## Publicación verificada
 
 Publicada en https://seguimiento-prueba-36658619bab1.seguimiento-pacientes.workers.dev/.
-Versión de Worker: `85b86098-0982-4f05-80d4-29ffe977c74a`.
+Versión de Worker: `84c567a6-78d8-4661-ac3b-1d29a86a10f4`.
 
 El propietario confirmó el uso del plan gratuito y autorizó continuar. La autorización OAuth no permite consultar la facturación exacta; no se cambió el plan ni se activaron servicios de pago. Se utilizaron exclusivamente el Worker, D1, R2 y secretos nativos existentes.
 
@@ -33,8 +33,10 @@ Comprobaciones HTTPS reales: raíz 200 y archivos idénticos a la compilación p
 
 ## Validación
 
-`npm run build` comprueba TypeScript y compila la interfaz. `npm test` usa una D1/R2 temporal: cálculo, guardado completo, conflictos concurrentes, aislamiento entre pacientes, protección de rutas y origen, flujo completo a 1280/390/360 px, conservación de la evolución heredada, importación de plantillas y OCR de un escaneo sin proveedores externos. Última ejecución verificada: 20 pruebas aprobadas, 0 fallidas y 0 omitidas. Arranque local en 8787 comprobado: health 200, modo local y lista de pacientes vacía; el entorno de pruebas no utiliza los pacientes reales.
+`npm run build` comprueba TypeScript y compila la interfaz. `npm test` usa una D1/R2 temporal: cálculo, guardado completo, conflictos concurrentes, aislamiento entre pacientes, protección de rutas y origen, flujo completo a 1280/390/360 px, conservación de la evolución heredada, importación de plantillas y OCR de un escaneo sin proveedores externos. Última ejecución verificada: 25 pruebas aprobadas, 0 fallidas y 0 omitidas. Arranque local en 8787 comprobado: health 200, modo local y lista de pacientes vacía; el entorno de pruebas no utiliza los pacientes reales.
 
 ## Pendientes posteriores solicitados
 
 Configurar la encuesta previa y sus invitaciones; conectar Reservo/WhatsApp/Canva si las integraciones oficiales lo permiten y cumplen las condiciones de costo; recibir recetas habituales y PDFs educativos para completar y diseñar los contenidos. La migración de Excel históricos requiere una etapa con vista previa y revisión de fechas/paciente/duplicados; no se ha importado el Excel personal del ejemplo.
+
+Actualización visual de evolución: barras por componente, medidas seleccionables e índices con referencias explícitas, integrada también en la ficha anterior. Tema claro de marca independiente del sistema. Véase `evolucion-corporal.md`.

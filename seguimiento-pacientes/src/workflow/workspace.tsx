@@ -1,3 +1,4 @@
+import { BodyEvolution } from "../evolution/BodyEvolution";
 import React, { useEffect, useState } from "react";
 import {
   LineChart,
@@ -2252,82 +2253,93 @@ function Evolution({ bundle, date, choose, onLegacy }: any) {
           ))}
           <button onClick={onLegacy}>Fotografías / InBody completo</button>
         </div>
-        {category === "lab" ? (
-          <Field
-            label="Examen para comparar"
-            value={selectedLab || ""}
-            options={labs.length ? labs : [["", "Sin resultados"]]}
-            onChange={setLab}
-          />
+        {category === "anthropometry" ? (
+          <BodyEvolution bundle={bundle} />
         ) : (
-          <Field
-            label="Variable"
-            value={metric}
-            options={metrics.map((m: any) => [m[0], m[1] + " (" + m[2] + ")"])}
-            onChange={setMetric}
-          />
+          <>
+            {category === "lab" ? (
+              <Field
+                label="Examen para comparar"
+                value={selectedLab || ""}
+                options={labs.length ? labs : [["", "Sin resultados"]]}
+                onChange={setLab}
+              />
+            ) : (
+              <Field
+                label="Variable"
+                value={metric}
+                options={metrics.map((m: any) => [
+                  m[0],
+                  m[1] + " (" + m[2] + ")",
+                ])}
+                onChange={setMetric}
+              />
+            )}
+            {comparable.length ? (
+              <div className="cw-chart">
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={comparable}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="time"
+                      type="number"
+                      domain={["dataMin", "dataMax"]}
+                      tickFormatter={(v) =>
+                        display(new Date(v).toISOString().slice(0, 10))
+                      }
+                    />
+                    <YAxis width={55} />
+                    <Tooltip
+                      labelFormatter={(v: any) =>
+                        display(new Date(Number(v)).toISOString().slice(0, 10))
+                      }
+                      formatter={(v: any, _, p: any) => [
+                        format(v) + " " + (p.payload.unit || ""),
+                        "Resultado",
+                      ]}
+                    />
+                    <Line
+                      dataKey="value"
+                      stroke="var(--brand-accent)"
+                      strokeWidth={3}
+                      dot={{ r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p>
+                No hay mediciones numéricas comparables para esta selección.
+              </p>
+            )}
+            {category === "lab" && (
+              <p className="cw-muted">
+                Solo se grafican juntos los resultados con la misma unidad. Las
+                referencias pertenecen a cada informe.
+              </p>
+            )}
+            <div className="cw-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fecha medición</th>
+                    <th>Resultado</th>
+                    <th>Unidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chart.map((r: any, i: number) => (
+                    <tr key={i}>
+                      <td>{display(r.date)}</td>
+                      <td>{r.qualitative || format(r.value)}</td>
+                      <td>{r.unit}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
-        {comparable.length ? (
-          <div className="cw-chart">
-            <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={comparable}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="time"
-                  type="number"
-                  domain={["dataMin", "dataMax"]}
-                  tickFormatter={(v) =>
-                    display(new Date(v).toISOString().slice(0, 10))
-                  }
-                />
-                <YAxis width={55} />
-                <Tooltip
-                  labelFormatter={(v: any) =>
-                    display(new Date(Number(v)).toISOString().slice(0, 10))
-                  }
-                  formatter={(v: any, _, p: any) => [
-                    format(v) + " " + (p.payload.unit || ""),
-                    "Resultado",
-                  ]}
-                />
-                <Line
-                  dataKey="value"
-                  stroke="var(--brand-accent)"
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <p>No hay mediciones numéricas comparables para esta selección.</p>
-        )}
-        {category === "lab" && (
-          <p className="cw-muted">
-            Solo se grafican juntos los resultados con la misma unidad. Las
-            referencias pertenecen a cada informe.
-          </p>
-        )}
-        <div className="cw-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha medición</th>
-                <th>Resultado</th>
-                <th>Unidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chart.map((r: any, i: number) => (
-                <tr key={i}>
-                  <td>{display(r.date)}</td>
-                  <td>{r.qualitative || format(r.value)}</td>
-                  <td>{r.unit}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </Card>
       <Card title="Resumen de controles">
         <div className="cw-table-wrap">

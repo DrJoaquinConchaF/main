@@ -500,19 +500,7 @@ body:not(.preview-mode) .patient.active {
     padding: 13px 10px;
   }
 }
-@media (prefers-color-scheme: dark) {
-  .cw {
-    --tone-rose: #432734;
-    --ink-rose: #f3b2c8;
-    --tone-mint: #233d34;
-    --ink-mint: #a8dfc9;
-    --tone-peach: #493123;
-    --ink-peach: #f4c49e;
-    --tone-lavender: #362b48;
-    --ink-lavender: #d3baf6;
-    background: var(--brand-bg);
-  }
-}
+
 @media (prefers-reduced-motion: reduce) {
   .cw button.cw-metric {
     transition: none;
@@ -570,4 +558,92 @@ body:not(.preview-mode) .patient.active {
   color: var(--brand-text);
   font-size: 12px;
   margin-bottom: 2px;
+}
+
+/* Apply the same design to the original file, PDF, photo and evolution views. */
+#root .workspace {
+  background: var(--brand-bg);
+}
+#root .topbar {
+  background: var(--brand-surface);
+  padding: 18px 26px;
+}
+#root .card {
+  border-radius: 22px;
+  border-color: var(--brand-border);
+  box-shadow: 0 5px 24px #40172705;
+}
+#root .tabs {
+  gap: 8px;
+  border-bottom: 0;
+  padding: 7px;
+  background: var(--brand-soft);
+  border-radius: 18px;
+}
+#root .tabs button {
+  border-radius: 13px;
+}
+#root .tabs .active {
+  background: var(--brand-surface);
+  color: var(--brand-accent);
+  box-shadow: 0 2px 12px #40172708;
+}
+#root .evolution-groups {
+  gap: 10px;
+}
+#root .evolution-groups button {
+  background: var(--brand-surface);
+  border-color: var(--brand-border);
+  border-radius: 16px;
+  min-height: 50px;
+}
+#root .evolution-groups button:nth-child(2) {
+  background: #e3f3ec;
+  color: #24624d;
+}
+#root .evolution-groups button:nth-child(3) {
+  background: #fcebdc;
+  color: #88491d;
+}
+#root .evolution-groups button:nth-child(4) {
+  background: #eee8f8;
+  color: #62418a;
+}
+#root .evolution-groups .active {
+  background: var(--brand-accent);
+  color: white;
+  border-color: var(--brand-accent);
+}
+#root .stat-card,
+#root .journey-stat {
+  background: var(--brand-soft);
+}
+@media (max-width: 1050px) {
+  #root .layout {
+    grid-template-columns: 1fr;
+  }
+  #root .sidebar {
+    position: static;
+    max-height: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--brand-border);
+    padding: 16px;
+  }
+  #root .patient-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  #root .workspace {
+    padding: 20px 16px;
+  }
+  #root .topbar {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  #root .patient-header {
+    flex-wrap: wrap;
+  }
+  #root .brand strong {
+    font-size: 16px;
+  }
 }

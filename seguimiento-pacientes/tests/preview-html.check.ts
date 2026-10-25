@@ -98,7 +98,21 @@ for (const width of [1280, 390])
           "Consulta guardada",
         );
         await section("Evolución");
+        await dialog
+          .getByRole("button", { name: "Peso y medidas", exact: true })
+          .click();
         await expect(dialog.locator("tbody").first()).toContainText("82");
+        await dialog
+          .getByRole("button", { name: "Índices y referencias", exact: true })
+          .click();
+        await expect(
+          dialog.getByLabel("Sexo para referencia cintura/cadera"),
+        ).toHaveValue("male");
+        await expect(dialog.getByText(/Referencia 0,90/)).toBeVisible();
+        await dialog
+          .getByLabel("Sexo para referencia cintura/cadera")
+          .selectOption("female");
+        await expect(dialog.getByText(/Referencia 0,85/)).toBeVisible();
         assert.equal(
           await dialog.evaluate((e) => e.scrollWidth <= e.clientWidth),
           true,

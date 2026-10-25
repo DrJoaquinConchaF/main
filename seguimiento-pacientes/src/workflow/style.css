@@ -529,30 +529,3 @@ body.clinical-open {
     margin-top: 18px;
   }
 }
-@media (prefers-color-scheme: dark) {
-  .cw {
-    --cw-bg: var(--brand-bg);
-    --cw-surface: var(--brand-surface);
-    --cw-ink: var(--brand-text);
-    --cw-muted: var(--brand-muted);
-    --cw-border: var(--brand-border);
-    --cw-accent: var(--brand-accent);
-  }
-  .cw button:hover {
-    background: var(--brand-soft);
-  }
-  .cw-date-list button[aria-pressed="true"] {
-    background: var(--brand-soft);
-    color: var(--brand-accent);
-  }
-  .cw-alert {
-    background: #44242e;
-    color: #ffbac8;
-    border-color: #77404d;
-  }
-  .cw-success {
-    background: #1b4036;
-    color: #a2e8c4;
-    border-color: #3d7060;
-  }
-}

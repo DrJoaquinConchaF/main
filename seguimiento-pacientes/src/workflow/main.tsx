@@ -1,4 +1,5 @@
 import React from "react";
+import { enhanceLegacyEvolution } from "../evolution/legacy-bridge";
 import { createRoot } from "react-dom/client";
 import { Workspace } from "./workspace";
 import "./style.css";
@@ -37,6 +38,12 @@ async function observe() {
   }
   const header = document.querySelector(".patient-header"),
     name = header?.querySelector("h1")?.textContent?.trim();
+  void enhanceLegacyEvolution(
+    current?.name === name &&
+      (!current?.rut || header?.textContent?.includes(current.rut))
+      ? current
+      : null,
+  );
   if (!header || !name) return;
   let launch = header.querySelector<HTMLButtonElement>(
     "[data-clinical-launch]",
@@ -74,6 +81,7 @@ async function resolve(name: string, forced: boolean) {
       (matches.length === 1 ? matches[0] : null);
     if (patient) {
       current = patient;
+      void enhanceLegacyEvolution(patient);
       if (forced || dismissed !== patient.id) open(patient);
     } else if (forced)
       window.alert(
