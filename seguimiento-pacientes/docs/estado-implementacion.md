@@ -23,7 +23,7 @@ La autorización OAuth con la cuenta del propietario se completó correctamente.
 ## Publicación verificada
 
 Publicada en https://seguimiento-prueba-36658619bab1.seguimiento-pacientes.workers.dev/.
-Versión de Worker: `531a13f9-fea4-4c06-9bef-1ec7fbbafbd1`.
+Versión de Worker: `95e5c394-cd2a-450c-934c-cd621831bc7b`.
 
 El propietario confirmó el uso del plan gratuito y autorizó continuar. La autorización OAuth no permite consultar la facturación exacta; no se cambió el plan ni se activaron servicios de pago. Se utilizaron exclusivamente el Worker, D1, R2 y secretos nativos existentes.
 

@@ -27,6 +27,13 @@ function open(patient: any) {
 }
 let resolving = false;
 async function observe() {
+  for (const mark of document.querySelectorAll<HTMLElement>(".brand-mark")) {
+    if (mark.dataset.monogram === "jc") continue;
+    mark.dataset.monogram = "jc";
+    mark.textContent = "JC";
+    mark.setAttribute("role", "img");
+    mark.setAttribute("aria-label", "JC · Dr. Joaquín Concha");
+  }
   const header = document.querySelector(".patient-header"),
     name = header?.querySelector("h1")?.textContent?.trim();
   if (!header || !name) return;

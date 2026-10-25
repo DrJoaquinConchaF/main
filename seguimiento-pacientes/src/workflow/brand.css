@@ -83,3 +83,34 @@ select {
 .recharts-tooltip-label {
   color: var(--brand-text) !important;
 }
+
+/* Staggered serif monogram based on the JC mark in the supplied publication. */
+.brand-mark[data-monogram="jc"] {
+  position: relative;
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--brand-accent);
+  border: 0;
+  border-radius: 0;
+  font-size: 0;
+  overflow: visible;
+}
+.brand-mark[data-monogram="jc"]::before,
+.brand-mark[data-monogram="jc"]::after {
+  position: absolute;
+  font-family: "Baskerville", "Times New Roman", serif;
+  font-weight: 400;
+  line-height: 1;
+}
+.brand-mark[data-monogram="jc"]::before {
+  content: "J";
+  font-size: 42px;
+  left: 6px;
+  top: -5px;
+}
+.brand-mark[data-monogram="jc"]::after {
+  content: "C";
+  font-size: 30px;
+  left: 18px;
+  top: 14px;
+}
