@@ -93,7 +93,9 @@ export function seedVisit(date: string, bundle: any) {
           (r.attention_date ||
             (!["lab", "inbody"].includes(r.kind) ? r.date : null)) &&
           (r.attention_date || r.date) < date,
-      ) || prior
+      ) ||
+      bundle.plans?.some((p: any) => p.date < date) ||
+      prior
         ? "control"
         : "initial",
     modality: "in_person",
@@ -497,4 +499,48 @@ export function visitTexts(data: any, patient: any, calculation: any) {
     .filter(Boolean)
     .join("\n\n");
   return { clinical, patientText };
+}
+
+/** Preserve visibility of historical visits recorded before structured consultation notes existed. */
+export function attentionSummaries(bundle: any) {
+  const dates = [
+    ...new Set<string>([
+      ...bundle.visits.map((v: any) => v.date),
+      ...bundle.plans.map((p: any) => p.date),
+      ...bundle.records
+        .filter(
+          (r: any) => r.attention_date || !["lab", "inbody"].includes(r.kind),
+        )
+        .map((r: any) => r.attention_date || r.date),
+    ]),
+  ].sort();
+  return dates.map((date) => {
+    const visit = bundle.visits.find((v: any) => v.date === date),
+      plan = bundle.plans.find((p: any) => p.date === date);
+    const habits = bundle.records
+      .filter(
+        (r: any) =>
+          r.kind === "habits" && (r.attention_date || r.date) === date,
+      )
+      .at(-1);
+    return {
+      date,
+      data: {
+        ...(visit?.data || {}),
+        general: {
+          ...(visit?.data.general || {}),
+          ...(typeof habits?.data.adherence === "number"
+            ? { adherencePercent: habits.data.adherence * 10 }
+            : {}),
+        },
+        medications: plan?.data.medications || visit?.data.medications || [],
+        closing: {
+          ...(visit?.data.closing || {}),
+          nextVisit: plan
+            ? plan.data.nextVisit
+            : visit?.data.closing?.nextVisit,
+        },
+      },
+    };
+  });
 }

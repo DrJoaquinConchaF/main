@@ -4,7 +4,7 @@
 
 La autorización OAuth con la cuenta del propietario se completó correctamente. Se recuperaron el servidor, esquema sin datos y artefactos públicos de la versión activa desde Cloudflare. Las funciones previas se conservan; la recuperación no incluye los TSX originales de la interfaz anterior. El nuevo flujo tiene código fuente propio mantenible.
 
-## Implementado localmente
+## Implementado y publicado
 
 - Antecedentes completos y resumen para Reservo editable, con límite visible de 400 caracteres. Abreviar el resumen no elimina antecedentes.
 - Consulta inicial y controles por fecha/modalidad, con preguntas, adherencia de 0–100%, dificultades, cambios percibidos, tolerancia y rendimiento.
@@ -20,15 +20,20 @@ La autorización OAuth con la cuenta del propietario se completó correctamente.
 - Biblioteca editable de recetas/órdenes con importación local de texto desde PDF/TXT, incluyendo OCR. No se cargan recetas reales por defecto, ni se inventan dosis.
 - Persistencia atómica y versiones: consulta, antecedentes, datos canónicos y tratamiento se guardan juntos. Una versión obsoleta no produce cambios parciales. Autenticación y comprobación de origen se mantienen.
 
-## Publicación pendiente
+## Publicación verificada
 
-La actualización todavía no está desplegada. No se han aplicado migraciones remotas ni modificado pacientes, archivos o secretos. El sitio publicado conserva su versión anterior.
+Publicada en https://seguimiento-prueba-36658619bab1.seguimiento-pacientes.workers.dev/.
+Versión de Worker: `e5ebdcfa-1497-4455-afe6-d85aa0fd1f25`.
 
-La cuenta autorizada no permite leer las suscripciones mediante la API. El propietario indicó que solo quiere opciones gratuitas y no conoce su plan de Workers. Antes de publicar hay que confirmar que es Free; no activar un plan, proveedor de correo/IA/WhatsApp, nuevo almacenamiento o servicio con cobros. El desarrollo y las pruebas se realizaron localmente.
+El propietario confirmó el uso del plan gratuito y autorizó continuar. La autorización OAuth no permite consultar la facturación exacta; no se cambió el plan ni se activaron servicios de pago. Se utilizaron exclusivamente el Worker, D1, R2 y secretos nativos existentes.
+
+Se obtuvo un respaldo consistente de las tablas en una única lectura SQL, se verificó su restauración en SQLite en memoria y se guardó de forma privada en `.cache/backups/before-clinical-workflow.sql` (excluido de Git, modo 0600). Solo se aplicó la migración aditiva 0011. Se conservaron los 2 pacientes, 56 registros, 6 planes, 10 documentos escritos y los archivos anteriores. No se añadieron pacientes ni datos ficticios a la base real durante las pruebas de publicación.
+
+Comprobaciones HTTPS reales: raíz 200 y archivos idénticos a la compilación probada; API de pacientes, biblioteca y nueva consulta rechazan acceso anónimo con 401; ingreso 200; nueva API autenticada confirma los 50 registros y 5 controles previos de Juan Prueba. Los controles heredados aparecen en la nueva tabla de evolución sin inventar respuestas ausentes.
 
 ## Validación
 
-`npm run build` comprueba TypeScript y compila la interfaz. `npm test` usa una D1/R2 temporal: cálculo, guardado completo, conflictos concurrentes, aislamiento entre pacientes, protección de rutas y origen, flujo completo a 1280/390/360 px, conservación de la evolución heredada, importación de plantillas y OCR de un escaneo sin proveedores externos. Última ejecución verificada: 19 pruebas aprobadas, 0 fallidas y 0 omitidas. Arranque local en 8787 comprobado: health 200, modo local y lista de pacientes vacía; el entorno de pruebas no utiliza los pacientes reales.
+`npm run build` comprueba TypeScript y compila la interfaz. `npm test` usa una D1/R2 temporal: cálculo, guardado completo, conflictos concurrentes, aislamiento entre pacientes, protección de rutas y origen, flujo completo a 1280/390/360 px, conservación de la evolución heredada, importación de plantillas y OCR de un escaneo sin proveedores externos. Última ejecución verificada: 20 pruebas aprobadas, 0 fallidas y 0 omitidas. Arranque local en 8787 comprobado: health 200, modo local y lista de pacientes vacía; el entorno de pruebas no utiliza los pacientes reales.
 
 ## Pendientes posteriores solicitados
 

@@ -40,6 +40,7 @@ import {
   textHabits,
   newActivity,
   newTreatment,
+  attentionSummaries,
 } from "./model";
 async function api(path: string, method = "GET", body?: any) {
   const r = await fetch("/api" + path, {
@@ -2215,7 +2216,7 @@ function Evolution({ bundle, date, choose, onLegacy }: any) {
               </tr>
             </thead>
             <tbody>
-              {bundle.visits.map((v: any) => (
+              {attentionSummaries(bundle).map((v: any) => (
                 <tr key={v.date}>
                   <td>
                     <button onClick={() => choose(v.date)}>

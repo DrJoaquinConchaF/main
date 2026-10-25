@@ -3,7 +3,11 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import worker from "../worker/index";
-import { seedVisit, buildSave } from "../src/workflow/model";
+import {
+  seedVisit,
+  buildSave,
+  attentionSummaries,
+} from "../src/workflow/model";
 function fixture() {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec(readFileSync("legacy/current-schema.sql", "utf8"));
@@ -313,3 +317,46 @@ test(
     assert.equal(after.history.version, 1);
   },
 );
+
+test("Historial anterior: controles y tratamientos visibles sin inventar respuestas ni confundir fechas de muestra", () => {
+  const bundle = {
+    history: null,
+    visits: [],
+    plans: [
+      {
+        date: "2026-01-10",
+        data: {
+          medications: [{ name: "TEST tratamiento", dose: "Consignada" }],
+          nextVisit: "2026-02-21",
+        },
+      },
+    ],
+    records: [
+      {
+        kind: "lab",
+        date: "2026-01-07",
+        attention_date: null,
+        data: { name: "TEST examen", value: 1 },
+      },
+      {
+        kind: "habits",
+        date: "2026-01-10",
+        attention_date: "2026-01-10",
+        data: { adherence: 8 },
+      },
+    ],
+  };
+  const before = JSON.stringify(bundle);
+  const rows = attentionSummaries(bundle);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].date, "2026-01-10");
+  assert.equal(rows[0].data.general.adherencePercent, 80);
+  assert.equal(rows[0].data.medications[0].name, "TEST tratamiento");
+  assert.equal(rows[0].data.closing.nextVisit, "2026-02-21");
+  assert.equal(rows[0].data.general.barriers, undefined);
+  assert.equal(JSON.stringify(bundle), before);
+  assert.equal(
+    seedVisit("2026-02-21", { ...bundle, records: [] }).data.type,
+    "control",
+  );
+});
