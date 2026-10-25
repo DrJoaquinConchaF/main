@@ -8,7 +8,9 @@
     "dev": "node scripts/dev.mjs",
     "db:local": "node scripts/local-db.mjs",
     "test": "bash tests/run.sh",
-    "test:unit": "node --test tests/clinical-workflow.test.mjs"
+    "test:unit": "node --test tests/clinical-workflow.test.mjs",
+    "preview:html": "node scripts/build-preview.mjs",
+    "test:html": "npm run preview:html && TEST_PREVIEW_HTML=/workspace/seguimiento-pacientes-demo.html tsx --test tests/preview-html.check.ts"
   },
   "dependencies": {
     "pdfjs-dist": "6.4.299",

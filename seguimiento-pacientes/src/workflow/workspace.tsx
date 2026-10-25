@@ -164,10 +164,10 @@ const tabs = [
   "Evolución",
   "Plantillas",
 ];
-export function Workspace({ patient, onClose }: any) {
+export function Workspace({ patient, onClose, initialDate }: any) {
   const [libraryDirty, setLibraryDirty] = useState(false);
   const [bundle, setBundle] = useState<any>(null),
-    [date, setDate] = useState(today()),
+    [date, setDate] = useState(initialDate || today()),
     [data, setData] = useState<any>(null),
     [version, setVersion] = useState(0),
     [tab, setTab] = useState("Consulta"),

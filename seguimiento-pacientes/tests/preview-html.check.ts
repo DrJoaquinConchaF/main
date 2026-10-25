@@ -1,0 +1,140 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { chromium, expect } from "@playwright/test";
+import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
+const path =
+  process.env.TEST_PREVIEW_HTML || "/workspace/seguimiento-pacientes-demo.html";
+for (const width of [1280, 390])
+  test(
+    "HTML autónomo " +
+      width +
+      "px: mismo flujo, guardado temporal y cero conexiones a Internet",
+    { timeout: 45000 },
+    async () => {
+      const html = readFileSync(path);
+      const hits: string[] = [];
+      const server = createServer((req, res) => {
+        hits.push(req.url || "");
+        if (req.url !== "/") {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        res.writeHead(200, {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-store",
+        });
+        res.end(html);
+      });
+      await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+      const address = server.address() as any;
+      const base = "http://127.0.0.1:" + address.port;
+      const browser = await chromium.launch({
+        executablePath: "/usr/bin/chromium",
+        args: ["--no-sandbox"],
+      });
+      const page = await browser.newPage({ viewport: { width, height: 900 } });
+      if (width === 390)
+        await page.addInitScript(() => {
+          Object.defineProperty(crypto, "randomUUID", {
+            value: undefined,
+            writable: true,
+            configurable: true,
+          });
+        });
+      page.setDefaultTimeout(10000);
+      const errors: string[] = [],
+        requests: string[] = [];
+      page.on("pageerror", (e) => errors.push(e.message));
+      page.on("request", (r) => {
+        if (/^https?:/.test(r.url()) && !r.url().startsWith(base))
+          requests.push(r.url());
+      });
+      try {
+        await page.goto(base);
+        let dialog = page.getByRole("dialog", {
+          name: "Consulta clínica",
+          exact: true,
+        });
+        await expect(dialog).toBeVisible();
+        await expect(page.getByLabel("Modo de prueba")).toContainText(
+          "DEMO HTML",
+        );
+        await expect(
+          dialog.getByLabel("Fecha de atención", { exact: true }),
+        ).toHaveValue("2026-10-10");
+        const section = (name: string) =>
+          dialog
+            .getByRole("navigation", { name: "Secciones de la consulta" })
+            .getByRole("button", { name, exact: true })
+            .click();
+        await section("Mediciones");
+        await expect(
+          dialog.getByLabel("Peso (kg)", { exact: true }),
+        ).toHaveValue("83");
+        await dialog.getByLabel("Peso (kg)", { exact: true }).fill("82");
+        await dialog
+          .getByRole("button", { name: "Guardar consulta", exact: true })
+          .click();
+        await expect(dialog.getByRole("status")).toContainText(
+          "Consulta guardada",
+        );
+        await section("Evolución");
+        await expect(dialog.locator("tbody").first()).toContainText("82");
+        assert.equal(
+          await dialog.evaluate((e) => e.scrollWidth <= e.clientWidth),
+          true,
+        );
+        await section("Plantillas");
+        await dialog
+          .getByLabel("Importar texto desde PDF o TXT", { exact: true })
+          .setInputFiles({
+            name: "Plantilla de demostración.txt",
+            mimeType: "text/plain",
+            buffer: Buffer.from(
+              "Texto ficticio para {{paciente}}. Fecha {{fecha}}.",
+            ),
+          });
+        await expect(
+          dialog.getByLabel("Texto de la plantilla", { exact: true }),
+        ).toHaveValue(/Texto ficticio/);
+        await dialog
+          .getByRole("button", { name: "Guardar plantilla", exact: true })
+          .click();
+        await expect(dialog.locator(".cw-template-list")).toContainText(
+          "Plantilla de demostración",
+        );
+        await dialog
+          .getByRole("button", {
+            name: "Cambiar paciente / volver",
+            exact: true,
+          })
+          .click();
+        await page.getByRole("button", { name: /Control 4/ }).click();
+        dialog = page.getByRole("dialog", {
+          name: "Consulta clínica",
+          exact: true,
+        });
+        await section("Mediciones");
+        await expect(
+          dialog.getByLabel("Peso (kg)", { exact: true }),
+        ).toHaveValue("82");
+        await page.reload();
+        dialog = page.getByRole("dialog", {
+          name: "Consulta clínica",
+          exact: true,
+        });
+        await section("Mediciones");
+        await expect(
+          dialog.getByLabel("Peso (kg)", { exact: true }),
+        ).toHaveValue("83");
+        assert.deepEqual(errors, []);
+        assert.deepEqual(requests, []);
+        assert.ok(hits.every((p) => p === "/" || p === "/favicon.ico"));
+      } finally {
+        await browser.close();
+        await new Promise<void>((r) => server.close(() => r()));
+      }
+    },
+  );
