@@ -1,49 +1,35 @@
-# Ampliación clínica: estado de implementación
+# Estado actual de la ampliación clínica
 
-## Estado real
+## Recuperación
 
-Se prepararon módulos independientes para integrar en la versión activa de la aplicación. Todavía no se integraron en su interfaz, no existe una nueva versión desplegada y no se modificaron D1, R2, secretos o pacientes. La encuesta previa y las integraciones con Reservo/WhatsApp/Canva quedan para etapas posteriores.
+La autorización OAuth con la cuenta del propietario se completó correctamente. Se recuperaron el servidor, esquema sin datos y artefactos públicos de la versión activa desde Cloudflare. Las funciones previas se conservan; la recuperación no incluye los TSX originales de la interfaz anterior. El nuevo flujo tiene código fuente propio mantenible.
 
-El checkout Git disponible solo contiene el repositorio original (commit 1192cba). El archivo `/workspace/seguimiento-pacientes-source.tar.gz` corresponde a una versión anterior, con migraciones 0000–0003, y no conserva las funcionalidades posteriores. No debe desplegarse para reemplazar la aplicación vigente.
+## Implementado localmente
 
-La página publicada responde 200 y referencia el bundle `index-CHFu2iim.js`. Cloudflare rechazó la credencial configurada del entorno con HTTP 400/código 9106. No se encontró una configuración OAuth de Wrangler utilizable en las ubicaciones del proyecto ni del usuario actual. La conexión Git de lectura funciona; origin/main no contiene los commits de la aplicación posterior.
+- Antecedentes completos y resumen para Reservo editable, con límite visible de 400 caracteres. Abreviar el resumen no elimina antecedentes.
+- Consulta inicial y controles por fecha/modalidad, con preguntas, adherencia de 0–100%, dificultades, cambios percibidos, tolerancia y rendimiento.
+- Tratamiento realmente utilizado por control, separado de nuevas indicaciones. Copia explícita del último tratamiento para revisar, sin copiar mediciones pasadas.
+- Historia de peso aproximada con eventos y gráfico separado de mediciones clínicas.
+- Pasos mensuales, ejercicio por actividad semanal, hidratación por recipiente/fuente, estrés, sueño, ronquidos y pausas respiratorias observadas.
+- Alimentación y recordatorio de un día específico, con horarios, cantidades, preparación y contexto.
+- Antropometría y perímetros con procedencia, índices calculados y seguimiento. Acceso a las funciones anteriores de laboratorio, InBody, PDF y fotografías.
+- Comparación de ecuaciones correctamente nombradas, gasto neto semanal de ejercicio y equivalente diario, dato manual explícito, revisión del doble conteo y método por componentes.
+- Ajuste en kcal/día, proteínas/grasas en g/kg o g/día, carbohidratos remanentes, 12 grupos de intercambio, adecuación y distribución por comidas.
+- Cierre con evaluación, metas realistas editables, derivación, nuevas indicaciones, exámenes pendientes y próximo control recomendado a seis semanas; fecha recomendada separada de cita agendada.
+- Textos para copiar a Reservo y al paciente; abrir WhatsApp prepara el mensaje, no lo envía automáticamente.
+- Biblioteca editable de recetas/órdenes con importación local de texto desde PDF/TXT, incluyendo OCR. No se cargan recetas reales por defecto, ni se inventan dosis.
+- Persistencia atómica y versiones: consulta, antecedentes, datos canónicos y tratamiento se guardan juntos. Una versión obsoleta no produce cambios parciales. Autenticación y comprobación de origen se mantienen.
 
-## Código preparado
+## Publicación pendiente
 
-`src/clinical-workflow/fields.json`: campos de antecedentes y controles, estados explícitos de información, procedencia de mediciones, recordatorio alimentario, metas y cierre, estructura del catálogo editable de recetas/órdenes/materiales, y distinción entre fecha de control recomendada y cita agendada.
+La actualización todavía no está desplegada. No se han aplicado migraciones remotas ni modificado pacientes, archivos o secretos. El sitio publicado conserva su versión anterior.
 
-`src/clinical-workflow/activities.json`: 140 actividades con MET y categoría extraídas del Excel del usuario, sin datos identificables. No se afirma que este catálogo sea exhaustivo ni que sus valores hayan sido verificados contra una fuente externa actualizada.
+La cuenta autorizada no permite leer las suscripciones mediante la API. El propietario indicó que solo quiere opciones gratuitas y no conoce su plan de Workers. Antes de publicar hay que confirmar que es Free; no activar un plan, proveedor de correo/IA/WhatsApp, nuevo almacenamiento o servicio con cobros. El desarrollo y las pruebas se realizaron localmente.
 
-`src/clinical-workflow/exchanges.json`: 12 grupos y sus kcal/proteínas/grasas/carbohidratos por porción, transcritos de las fórmulas del Excel. Fuente indicada por el libro: UDD 2019, pendiente cotejo independiente con el manual.
+## Validación
 
-`src/clinical-workflow/calculations.mjs`:
-- Ecuaciones nombradas correctamente, sin resultados de reposo si faltan entradas necesarias.
-- Actividades semanales por sesiones/duración o minutos totales. Gasto neto por MET menos 1 MET de reposo; dato manual en kcal netas semanales sustituye el cálculo, no se suma a él. Es un método explícito nuevo y no una reproducción silenciosa de las fórmulas inconsistentes del Excel.
-- Cálculo por componentes solo muestra el total después de revisar el posible doble conteo de pasos y ejercicio. El porcentaje de termogénesis se define como parte del gasto total, con método versionado; no equivale al 10% del reposo del Excel.
-- Déficit/superávit en kcal/día; proteína y grasas en g/kg o g/día con peso de referencia explícito; remanente de carbohidratos, detectando objetivos imposibles.
-- Totales y adecuación de intercambios; distribución pendiente, completa o excedida por comida.
+`npm run build` comprueba TypeScript y compila la interfaz. `npm test` usa una D1/R2 temporal: cálculo, guardado completo, conflictos concurrentes, aislamiento entre pacientes, protección de rutas y origen, flujo completo a 1280/390/360 px, conservación de la evolución heredada, importación de plantillas y OCR de un escaneo sin proveedores externos. Última ejecución verificada: 19 pruebas aprobadas, 0 fallidas y 0 omitidas. Arranque local en 8787 comprobado: health 200, modo local y lista de pacientes vacía; el entorno de pruebas no utiliza los pacientes reales.
 
-`src/clinical-workflow/consultation.mjs`:
-- Resumen para Reservo con contador de 400 caracteres y sin recorte automático; distingue no preguntado/niega/desconocido/informado.
-- Validación de fechas, adherencia y estrés; propuesta editable a seis semanas.
-- Composición literal de plantillas guardadas, sustitución limitada de campos y exámenes enumerados sin duplicados exactos. La interfaz para guardar o cargar archivos y el catálogo real del profesional aún requieren integración.
+## Pendientes posteriores solicitados
 
-## Validación realizada
-
-Node 24, sin dependencias externas:
-
-```
-cd /workspace/main
-node --test seguimiento-pacientes/tests/clinical-workflow.test.mjs
-```
-
-9 pruebas aprobadas, 0 fallidas, 0 omitidas. Reproducen el ejemplo del Excel de 1885 kcal / 163,25 g proteínas / 52,25 g grasas / 194,5 g carbohidratos, y verifican unidades semanales, dato manual, antecedentes largos, seis semanas, ecuaciones y composición de documentos. No son pruebas de la aplicación publicada ni pruebas en navegador.
-
-## Para completar la solicitud
-
-1. Restablecer la conexión autorizada a Cloudflare: corregir la credencial existente en ajustes seguros del entorno o vincular nuevamente la cuenta mediante el flujo oficial. No introducir credenciales en el chat.
-2. Recuperar el código correspondiente a la versión desplegada y sus migraciones, conservar una copia previa y verificar bindings actuales. Si se recupera solo el bundle desplegado, documentar ese límite y no confundirlo con código fuente completo.
-3. Integrar los campos y módulos, persistencia versionada por paciente/fecha, historial, fuentes de medición, pantalla de consulta y biblioteca de plantillas/archivos, manteniendo las rutas y funciones previas.
-4. Revisar/ampliar PDF de laboratorio e InBody, carga histórica de Excel y evolución de todos los datos, con revisión de fechas, unidades, originales y duplicados.
-5. Ejecutar compilación y pruebas del código integrado; pruebas de navegador a anchos de teléfono y computador, preservación de registros y permisos.
-6. Aplicar exclusivamente migraciones aditivas necesarias y desplegar sobre el Worker existente, preservando los secretos nativos, D1/R2 y la URL. Validar el resultado real antes de anunciar actualización.
+Configurar la encuesta previa y sus invitaciones; conectar Reservo/WhatsApp/Canva si las integraciones oficiales lo permiten y cumplen las condiciones de costo; recibir recetas habituales y PDFs educativos para completar y diseñar los contenidos. La migración de Excel históricos requiere una etapa con vista previa y revisión de fechas/paciente/duplicados; no se ha importado el Excel personal del ejemplo.

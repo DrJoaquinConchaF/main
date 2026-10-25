@@ -1,0 +1,37 @@
+{
+  "origin": "https://seguimiento-prueba-36658619bab1.seguimiento-pacientes.workers.dev",
+  "assets": {
+    "Evolution-D9NaWBwL.js": "30b0536868b9e597d617c3489c91fdb43c901a7b0d083ca380026fa1a1e6a97c",
+    "index-BXR3AcED.css": "d1e581a05dfa59d41d8e104d88e6542279dd7600461702c82c98859c560b6368",
+    "index-CHFu2iim.js": "5ddcc9a23122920c4a692cd49716aa19370aca8ff379e0061cb65709572d1aaa",
+    "pdf-BoIzRjT5.js": "efd0e3cebc46aabd4e3001ce43522275601eb722f266ea626d7b11b5a4636de7",
+    "pdf.worker.min--Ao2iAXA.js": "3688d884eb897100293de3d4866d69023f61202001fdca89a0cc10998b03f8eb",
+    "pdf.worker.min-CjEcRF4W.mjs": "9536359f1b8367850d485731ca1d5e45c159a7b7a0912325e539937aa21ceb18",
+    "read-pdf-1cBH5bjo.js": "78e2a485050217e40e730688ad06ae13c1283fe61a339e2bb59f6bd9eb787553",
+    "rolldown-runtime-C0FnF6B9.js": "e0a79ad36c6ca1ffbc796c80aa5661803a9d1bc684e29d1587f48b4ba9a82714",
+    "src-SuYvKHvm.js": "16966625e6c2b09901e095c370e72aef9b87edc95c67502c7e0e1135d5646a2c"
+  },
+  "ocr": {
+    "eng.traineddata.gz": "45b4cb346724ac1774f1c36f42f182b887bcdb28ebe63e6fff90ac41f3fcff91",
+    "spa.traineddata.gz": "40be52f97b5d4eb7460073dc1f94cd546b27150333c0bf854ed7e7132db6bceb",
+    "tesseract-core-lstm.wasm": "66b17df6e20c5329a17ffa9c202a47eaa3e32500b253d4c7f38e7f2bc01457c3",
+    "tesseract-core-lstm.wasm.js": "eef5f8b2f8e20e150680b20adaec4a60babafee3adbe8a94583c81fee46e8680",
+    "tesseract-core-relaxedsimd-lstm.wasm": "7985c92d4c64e7267d24cadffe1b2a1da6bf8aa55fdcaf953fe94fe122a24545",
+    "tesseract-core-relaxedsimd-lstm.wasm.js": "861a536cf9ef8e63cb644d57bab39c388f37f7d6b6f60024b741c5f6b39a59b3",
+    "tesseract-core-simd-lstm.wasm": "34e8d50cac216427d86bf397d610fdd9f49492539bbcdfbfccc4eda20c810bea",
+    "tesseract-core-simd-lstm.wasm.js": "c58b46a4c796c0b8afccf77591d5b875b6896b45d402bbce8caa6f5362447b38",
+    "worker.min.js": "576b7df7e3393e137e51849357c9adb53fe7ac1bb69bfa06cf3d61520f182c6d"
+  },
+  "publishedWorkerSha256": "9d90f7a3db4c0b174bc303788647250f0350245feca7bff7c7d57ea2933f1ad0",
+  "deployment": {
+    "id": "3e6572e0-3f88-44d3-971b-d485cc595b78",
+    "created_on": "2026-10-17T00:10:40.910608Z",
+    "source": "wrangler",
+    "versions": [
+      {
+        "version_id": "8a799b1b-47d1-40a0-9085-8ba0d6d8d7d5",
+        "percentage": 100
+      }
+    ]
+  }
+}
