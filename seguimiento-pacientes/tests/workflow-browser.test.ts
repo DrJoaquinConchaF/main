@@ -43,6 +43,7 @@ for (const config of [
           .locator("button.patient")
           .filter({ hasText: patient.name })
           .click();
+        await page.locator("[data-clinical-launch]").click();
         let dialog = page.getByRole("dialog", {
           name: "Consulta clínica",
           exact: true,
@@ -330,6 +331,7 @@ test(
         .locator("button.patient")
         .filter({ hasText: patient.name })
         .click();
+      await page.locator("[data-clinical-launch]").click();
       const dialog = page.getByRole("dialog", {
         name: "Consulta clínica",
         exact: true,

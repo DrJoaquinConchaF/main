@@ -32,6 +32,7 @@ test(
         .locator("button.patient")
         .filter({ hasText: patient.name })
         .click();
+      await page.locator("[data-clinical-launch]").click();
       let dialog = page.getByRole("dialog", {
         name: "Consulta clínica",
         exact: true,
@@ -53,8 +54,12 @@ test(
         .click();
       await dialog.getByRole("checkbox", { name: /^Wegovy/ }).check();
       await dialog
-        .getByLabel("Elegir lápiz o pluma de Wegovy", { exact: true })
-        .selectOption("Wegovy 2.4 mg/dosis");
+        .getByRole("group", {
+          name: "Elegir lápiz o pluma de Wegovy",
+          exact: true,
+        })
+        .getByRole("button", { name: "2.4 mg/dosis", exact: true })
+        .click();
       await dialog
         .getByLabel("Dosis administrada de Wegovy", { exact: true })
         .fill("1.2 mg");
@@ -78,8 +83,9 @@ test(
         .click();
       await dialog.getByRole("checkbox", { name: /^Creatina/ }).check();
       await dialog
-        .getByLabel("Elegir dosis de Creatina", { exact: true })
-        .selectOption("5 g");
+        .getByRole("group", { name: "Elegir dosis de Creatina", exact: true })
+        .getByRole("button", { name: "5 g", exact: true })
+        .click();
       await dialog
         .getByLabel("Suplementos en uso 1: Frecuencia", { exact: true })
         .fill("1 vez al día");
@@ -148,6 +154,72 @@ test(
         await fetch(base + `/api/clinical/patients/${patient.id}`)
       ).json();
       assert.deepEqual(after.plans, before.plans);
+      await dialog
+        .getByRole("button", { name: "Medicamentos", exact: true })
+        .click();
+      await dialog.getByRole("button", { name: /^Wegovy/ }).click();
+      await dialog.locator("details.click-options-editor > summary").click();
+      await dialog
+        .getByRole("button", {
+          name: "Agregar combinación de dosis y clics",
+          exact: true,
+        })
+        .click();
+      await dialog
+        .getByLabel("Pluma exacta de combinación 1", { exact: true })
+        .fill("Wegovy · dispositivo ficticio A");
+      await dialog
+        .getByLabel("Dosis de combinación 1", { exact: true })
+        .fill("1.2 mg");
+      await dialog
+        .getByLabel("Clics de combinación 1", { exact: true })
+        .fill("37–38");
+      await dialog
+        .getByLabel("Fuente de combinación 1", { exact: true })
+        .fill("https://example.invalid/tabla-prueba");
+      await dialog
+        .getByRole("checkbox", {
+          name: "He cotejado esta fila con la fuente y la presentación exacta",
+          exact: true,
+        })
+        .check();
+      await dialog
+        .getByRole("button", { name: "Guardar catálogo", exact: true })
+        .click();
+      await expect(
+        dialog.locator(".treatment-settings").getByRole("status"),
+      ).toContainText("Catálogo guardado");
+      await section("Consulta");
+      await dialog
+        .getByRole("group", {
+          name: "Elegir lápiz o pluma de Wegovy",
+          exact: true,
+        })
+        .getByRole("button", {
+          name: "Wegovy · dispositivo ficticio A",
+          exact: true,
+        })
+        .click();
+      await expect(
+        dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
+      ).toHaveValue("");
+      await dialog
+        .getByRole("group", {
+          name: "Seleccionar dosis y clics para esta pluma",
+          exact: true,
+        })
+        .getByRole("button", { name: "1.2 mg (37–38 clics)", exact: true })
+        .click();
+      await expect(
+        dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
+      ).toHaveValue("37–38");
+      await dialog
+        .getByRole("button", { name: "Guardar consulta", exact: true })
+        .click();
+      await expect(dialog.getByRole("status")).toContainText(
+        "Consulta guardada",
+      );
+      await section("Configuración");
       await section("Consulta");
       await dialog
         .locator("details.treatment-selector")
@@ -156,7 +228,7 @@ test(
         .click();
       await expect(
         dialog.getByRole("checkbox", { name: /^Hierro oral/ }),
-      ).toHaveAccessibleName(/60 mg de hierro elemental/);
+      ).toHaveAccessibleName(/2 dosis disponibles/);
       await dialog
         .getByRole("button", { name: "Cambiar paciente / volver", exact: true })
         .click();

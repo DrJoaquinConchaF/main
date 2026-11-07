@@ -1,3 +1,4 @@
+import { historyForSave } from "../consultation/weight-history.mjs";
 import {
   resourceText,
   devicePrescription,
@@ -89,7 +90,10 @@ export function seedVisit(date: string, bundle: any) {
     [];
   const plan = bundle.plans?.find((p: any) => p.date === date);
   const history = bundle.history?.data || {};
-  const prior = bundle.visits?.filter((v: any) => v.date < date).at(-1);
+  const prior = bundle.visits
+    ?.filter((v: any) => v.date < date)
+    .sort((a: any, b: any) => a.date.localeCompare(b.date))
+    .at(-1);
   const base: any = {
     date,
     type:
@@ -106,7 +110,7 @@ export function seedVisit(date: string, bundle: any) {
     modality: "in_person",
     history: structuredClone(history),
     context: "",
-    weightHistory: [],
+    weightHistory: structuredClone(prior?.data.weightHistory || []),
     general: {},
     habits: {},
     foodNotes: {},
@@ -343,6 +347,7 @@ export function buildSave(data: any, bundle: any, expectedVersion: number) {
     .join("\n");
   const dto = {
     ...data,
+    weightHistory: historyForSave(data.weightHistory, data.demographics, date),
     adherencePercent: num(data.general.adherencePercent),
     stress1to10: num(data.habits.stress),
   };
@@ -439,7 +444,10 @@ export function visitTexts(data: any, patient: any, calculation: any) {
     .join("\n");
   const hydrationText = data.drinks
     .filter((d: any) => d.count !== "" && d.count != null)
-    .map((d: any) => `${d.name}: ${d.count} × ${d.volume} ml/día`)
+    .map(
+      (d: any) =>
+        `${d.name === "Otra" && d.otherName ? d.otherName : d.name}: ${d.count} × ${d.volume} ml/día`,
+    )
     .join("; ");
   const historyText = historyFields
     .map((f) => {

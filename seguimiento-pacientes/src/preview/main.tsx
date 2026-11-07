@@ -6,6 +6,7 @@ import { demoPatient, installPreviewApi } from "./state";
 import "../workflow/style.css";
 import "./style.css";
 import "../workflow/design.css";
+import "../consultation/compact.css";
 // Some mobile file viewers omit randomUUID; the demo still uses cryptographic random values.
 if (typeof crypto.randomUUID !== "function") {
   (crypto as any).randomUUID = () => {

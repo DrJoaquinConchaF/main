@@ -1,3 +1,9 @@
+import { ClickOptionsEditor } from "./ClickOptionsEditor";
+import {
+  choicesForPen,
+  applyClickChoice,
+  clickChartSource,
+} from "./click-options.mjs";
 import { readDevice, writeDevice } from "./device.mjs";
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -96,8 +102,8 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                   <strong>{e.name}</strong>
                   <small>
                     {e.doses.length
-                      ? e.doses.join(" · ")
-                      : "Dosis personalizada según presentación"}
+                      ? `${e.doses.length} ${e.clickCounting ? "presentaciones" : "dosis"} disponibles`
+                      : "Dosis personalizada"}
                   </small>
                 </span>
               </label>
@@ -119,6 +125,16 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
       {values.map((m: any, i: number) => {
         const entry = available.find((e) => selectedProduct([m], e.name));
         const device = readDevice(m);
+        const clickChoices = choicesForPen(entry, device.pen);
+        const reviewedPens = [
+          ...new Set(
+            (entry?.clickOptions || [])
+              .filter(
+                (r: any) => r.verified && choicesForPen(entry, r.pen).length,
+              )
+              .map((r: any) => r.pen),
+          ),
+        ] as string[];
         const penProduct =
           !!entry?.clickCounting || hasClicks(m.notes) || !!device.pen;
         const updateDevice = (patch: any) => {
@@ -143,32 +159,38 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                 />
               </label>
               {penProduct && (
-                <label className="cw-field">
-                  {"Elegir lápiz o pluma de " + m.name}
-                  <select
-                    aria-label={"Elegir lápiz o pluma de " + m.name}
-                    value={device.pen}
-                    onChange={(e) => updateDevice({ pen: e.target.value })}
-                  >
-                    <option value="">
-                      Seleccionar presentación de la pluma
-                    </option>
-                    {entry?.doses.map((dose: string) => (
-                      <option key={dose} value={m.name + " " + dose + "/dosis"}>
-                        {m.name + " " + dose + "/dosis"}
-                      </option>
+                <fieldset className="dose-options">
+                  <legend>{"Elegir lápiz o pluma de " + m.name}</legend>
+                  <div className="dose-chips">
+                    {reviewedPens.map((pen) => (
+                      <button
+                        type="button"
+                        key={pen}
+                        aria-pressed={device.pen === pen}
+                        onClick={() => updateDevice({ pen })}
+                      >
+                        {pen}
+                      </button>
                     ))}
-                    {device.pen &&
-                      !entry?.doses.some(
-                        (dose: string) =>
-                          device.pen === m.name + " " + dose + "/dosis",
-                      ) && <option value={device.pen}>{device.pen}</option>}
-                  </select>
+                    {entry?.doses.map((dose: string) => (
+                      <button
+                        type="button"
+                        key={dose}
+                        aria-pressed={
+                          device.pen === m.name + " " + dose + "/dosis"
+                        }
+                        onClick={() =>
+                          updateDevice({ pen: m.name + " " + dose + "/dosis" })
+                        }
+                      >
+                        {dose}/dosis
+                      </button>
+                    ))}
+                  </div>
                   <small>
-                    Presentación del dispositivo; no cambia la dosis
-                    administrada.
+                    La presentación no modifica la dosis administrada.
                   </small>
-                </label>
+                </fieldset>
               )}
               {penProduct && (
                 <label className="cw-field">
@@ -181,24 +203,29 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                   />
                 </label>
               )}
-              {!penProduct && !!entry?.doses.length && (
-                <label className="cw-field">
-                  {"Elegir dosis de " + m.name}
-                  <select
-                    aria-label={"Elegir dosis de " + m.name}
-                    value={entry.doses.includes(m.dose) ? m.dose : ""}
-                    onChange={(e) => {
-                      if (e.target.value) edit(i, "dose", e.target.value);
-                    }}
-                  >
-                    <option value="">
-                      Selecciona una dosis o escríbela abajo
-                    </option>
-                    {entry.doses.map((d: string) => (
-                      <option key={d}>{d}</option>
+              {!!entry?.doses.length && (
+                <fieldset className="dose-options">
+                  <legend>{"Elegir dosis de " + m.name}</legend>
+                  <div className="dose-chips">
+                    {entry.doses.map((dose: string) => (
+                      <button
+                        type="button"
+                        key={dose}
+                        aria-pressed={
+                          (penProduct ? device.dose : m.dose) === dose
+                        }
+                        onClick={() =>
+                          penProduct
+                            ? updateDevice({ dose })
+                            : edit(i, "dose", dose)
+                        }
+                      >
+                        {dose}
+                      </button>
                     ))}
-                  </select>
-                </label>
+                  </div>
+                  <small>Puedes escribir una dosis personalizada debajo.</small>
+                </fieldset>
               )}
               <label className="cw-field">
                 {penProduct
@@ -268,6 +295,42 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                 </label>
                 {(hasClicks(m.notes) || !!device.clicks) && (
                   <>
+                    <fieldset className="dose-options">
+                      <legend>Seleccionar dosis y clics para esta pluma</legend>
+                      <div className="dose-chips">
+                        {clickChoices.map((choice: any) => (
+                          <button
+                            type="button"
+                            key={choice.dose}
+                            aria-pressed={
+                              device.dose === choice.dose &&
+                              device.clicks === choice.clicks
+                            }
+                            onClick={() => {
+                              const next = structuredClone(values);
+                              next[i] = applyClickChoice(m, choice);
+                              onChange(next);
+                            }}
+                          >
+                            {choice.dose} ({choice.clicks} clics)
+                          </button>
+                        ))}
+                      </div>
+                      {!clickChoices.length && (
+                        <p className="cw-muted">
+                          No hay filas revisadas para esta presentación exacta.
+                          Puedes registrar los datos manualmente o añadir la
+                          combinación en Configuración.
+                        </p>
+                      )}
+                      <a
+                        href={clickChartSource}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Consultar la tabla de referencia ↗
+                      </a>
+                    </fieldset>
                     <label className="cw-field">
                       {"Clics indicados de " + m.name}
                       <input
@@ -371,7 +434,25 @@ export function CatalogEditor({ onDirty, onBusy }: any) {
   };
   const current = items.find((e) => e.id === selected);
   const field = (key: string, value: any) =>
-    change(items.map((e) => (e.id === selected ? { ...e, [key]: value } : e)));
+    change(
+      items.map((e) =>
+        e.id === selected
+          ? {
+              ...e,
+              [key]: value,
+              ...(["name", "doses", "clickCounting"].includes(key) &&
+              e.clickOptions
+                ? {
+                    clickOptions: e.clickOptions.map((row: any) => ({
+                      ...row,
+                      verified: false,
+                    })),
+                  }
+                : {}),
+            }
+          : e,
+      ),
+    );
   const save = async () => {
     const problem = validateCatalog(items);
     if (problem) {
@@ -450,7 +531,9 @@ export function CatalogEditor({ onDirty, onBusy }: any) {
                   >
                     <strong>{e.name}</strong>
                     <small>
-                      {e.doses.join(" · ") || "Dosis personalizada"}
+                      {e.doses.length
+                        ? `${e.doses.length} ${e.clickCounting ? "presentaciones" : "dosis"} configuradas`
+                        : "Dosis personalizada"}
                     </small>
                   </button>
                 ))}
@@ -525,6 +608,12 @@ export function CatalogEditor({ onDirty, onBusy }: any) {
                     />
                     Permitir registrar conteo de clics
                   </label>
+                  {current.clickCounting && (
+                    <ClickOptionsEditor
+                      entry={current}
+                      onChange={(rows: any[]) => field("clickOptions", rows)}
+                    />
+                  )}
                   <button
                     onClick={() => {
                       change(items.filter((e) => e.id !== selected));

@@ -66,6 +66,7 @@ for (const width of [390, 1280])
           .locator("button.patient")
           .filter({ hasText: patient.name })
           .click();
+        await page.locator("[data-clinical-launch]").click();
         const dialog = page.getByRole("dialog", {
           name: "Consulta clínica",
           exact: true,

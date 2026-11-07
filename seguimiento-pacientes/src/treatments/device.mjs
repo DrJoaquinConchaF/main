@@ -22,9 +22,17 @@ export function writeDevice(treatment, patch) {
     (patch.dose !== undefined && patch.dose !== previous.dose)
   )
     current.clicks = "";
+  const changed =
+    (patch.pen !== undefined && patch.pen !== previous.pen) ||
+    (patch.dose !== undefined && patch.dose !== previous.dose) ||
+    (patch.clicks !== undefined && patch.clicks !== previous.clicks);
   const lines = String(treatment.notes || "")
     .split("\n")
-    .filter((line) => !line.startsWith(penPrefix))
+    .filter(
+      (line) =>
+        !line.startsWith(penPrefix) &&
+        !(changed && line.startsWith("Fuente de dosis/clics: ")),
+    )
     .map((line) =>
       line === "Con conteo de clics · lápiz y número de clics: por completar"
         ? "Con conteo de clics"

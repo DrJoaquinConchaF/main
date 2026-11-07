@@ -1,3 +1,5 @@
+import { WeightHistory } from "../consultation/WeightHistory";
+import { LabResults } from "../consultation/compact";
 import { WegovySupport } from "../treatments/WegovySupport";
 import {
   TreatmentPicker,
@@ -238,14 +240,14 @@ export function Workspace({ patient, onClose, initialDate }: any) {
     )
       return;
     if (destination && dirty) {
-      if (await save()) onClose(destination);
+      if (await save()) onClose(destination, date);
       return;
     }
     if (
       !dirty ||
       window.confirm("Hay cambios sin guardar en esta consulta. ¿Descartarlos?")
     )
-      onClose(destination);
+      onClose(destination, date);
   };
   const choose = (next: string) => {
     if (next === date) return true;
@@ -787,6 +789,18 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       />
                     </Card>
                     <WeightHistory
+                      demographics={data.demographics}
+                      date={date}
+                      onDemographicsChange={(value: any) =>
+                        set("", "demographics", value)
+                      }
+                      previousHistory={[...(bundle.visits || [])]
+                        .filter(
+                          (v: any) =>
+                            v.date !== date && v.data.weightHistory?.length,
+                        )
+                        .sort((a: any, b: any) => a.date.localeCompare(b.date))
+                        .at(-1)}
                       values={data.weightHistory}
                       onChange={(v: any) => set("", "weightHistory", v)}
                     />
@@ -1045,12 +1059,21 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         Para agregar o revisar un PDF, abre la ficha de
                         seguimiento.
                       </p>
-                      <button onClick={() => leave("Atención actual")}>
+                      <button onClick={() => leave("Documentos")}>
                         Abrir carga de PDF y resultados
                       </button>
                       <button onClick={() => leave("Evolución")}>
                         Ver gráficos y seguimiento fotográfico
                       </button>
+                      <LabResults
+                        records={bundle.records.filter(
+                          (r: any) =>
+                            r.kind === "lab" &&
+                            (r.attention_date === date ||
+                              (!r.attention_date && r.date === date)),
+                        )}
+                        title="Exámenes de esta atención"
+                      />
                       {currentInBody && (
                         <p>
                           InBody de esta atención: medición{" "}
@@ -1684,102 +1707,16 @@ function HistorySummary({ history, override, onChange }: any) {
     </Card>
   );
 }
-function WeightHistory({ values, onChange }: any) {
-  const plot = values
-    .map((v: any) => ({
-      age: num(v.age),
-      weight: num(v.weight),
-      event: v.event,
-    }))
-    .filter((v: any) => v.age !== null && v.weight !== null)
-    .sort((a: any, b: any) => a.age - b.age);
-  return (
-    <Card
-      title="Historia del peso"
-      subtitle="Pesos recordados y eventos de vida. No se mezclan con las mediciones clínicas."
-    >
-      {values.map((v: any, i: number) => (
-        <div className="cw-repeater" key={v.key}>
-          <div className="cw-grid">
-            {[
-              ["stage", "Etapa de vida"],
-              ["age", "Edad aproximada"],
-              ["year", "Año aproximado"],
-              ["weight", "Peso aproximado (kg)"],
-              ["event", "Evento / contexto"],
-            ].map(([k, l]) => (
-              <Field
-                key={k}
-                label={l + " " + (i + 1)}
-                value={v[k]}
-                onChange={(s: string) => {
-                  const next = structuredClone(values);
-                  next[i][k] = s;
-                  onChange(next);
-                }}
-              />
-            ))}
-          </div>
-          <button
-            onClick={() =>
-              onChange(values.filter((_: any, j: number) => i !== j))
-            }
-          >
-            Quitar punto
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={() =>
-          onChange([
-            ...values,
-            { key: uid(), stage: "", age: "", year: "", weight: "", event: "" },
-          ])
-        }
-      >
-        Agregar etapa / evento
-      </button>
-      {plot.length > 1 && (
-        <div className="cw-chart">
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={plot}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                type="number"
-                dataKey="age"
-                domain={["dataMin", "dataMax"]}
-                label={{
-                  value: "Edad aproximada",
-                  position: "insideBottom",
-                  offset: -3,
-                }}
-              />
-              <YAxis unit=" kg" />
-              <Tooltip
-                formatter={(v: any) => [format(v) + " kg", "Peso recordado"]}
-                labelFormatter={(age: any, p: any) =>
-                  "Edad " + age + " · " + (p[0]?.payload?.event || "")
-                }
-              />
-              <Line
-                dataKey="weight"
-                stroke="var(--brand-accent)"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </Card>
-  );
-}
 function Activities({ values, onChange, nested = false }: any) {
   const content = (
     <>
       {values.map((a: any, i: number) => (
-        <div className="cw-repeater" key={a.key}>
-          <h3>Actividad {i + 1}</h3>
-          <div className="cw-grid">
+        <div className="cw-repeater cw-activity" key={a.key}>
+          <h3>
+            Actividad {i + 1}
+            {a.name ? " · " + a.name : ""}
+          </h3>
+          <div className="cw-activity-basic">
             <Field
               label={"Actividad " + (i + 1) + ": disciplina"}
               value={a.name}
@@ -1931,6 +1868,8 @@ function Drinks({ values, onChange }: any) {
               "Jugo",
               "Bebida sin azúcar",
               "Bebida azucarada",
+              "Leche",
+              "Bebida vegetal",
               "Otra",
             ]}
             onChange={(v: string) => {
@@ -1939,6 +1878,17 @@ function Drinks({ values, onChange }: any) {
               update(n);
             }}
           />
+          {d.name === "Otra" && (
+            <Field
+              label={"Especifica otra bebida " + (i + 1)}
+              value={d.otherName || ""}
+              onChange={(value: string) => {
+                const next = structuredClone(values);
+                next[i].otherName = value;
+                update(next);
+              }}
+            />
+          )}
           <Field
             label={"Volumen por recipiente " + (i + 1) + " (ml)"}
             value={d.volume}

@@ -1,3 +1,4 @@
+import { validateClickOptions } from "./click-options.mjs";
 const entry = (id, kind, name, doses = [], clickCounting = false) => ({
   id,
   kind,
@@ -64,7 +65,15 @@ export function validateCatalog(items) {
       !e ||
       typeof e !== "object" ||
       Object.keys(e).some(
-        (k) => !["id", "kind", "name", "doses", "clickCounting"].includes(k),
+        (k) =>
+          ![
+            "id",
+            "kind",
+            "name",
+            "doses",
+            "clickCounting",
+            "clickOptions",
+          ].includes(k),
       ) ||
       typeof e.id !== "string" ||
       !e.id ||
@@ -79,6 +88,10 @@ export function validateCatalog(items) {
       e.doses.some((d) => typeof d !== "string" || !d.trim() || d.length > 120)
     )
       return "Revisa nombre, tipo y dosis del catálogo.";
+    const clickError = validateClickOptions(e.clickOptions);
+    if (clickError) return clickError;
+    if (!e.clickCounting && e.clickOptions?.some((row) => row.verified))
+      return "Activa el registro de clics para habilitar filas revisadas.";
     const name = e.kind + "|" + e.name.trim().toLocaleLowerCase("es");
     if (ids.has(e.id) || names.has(name))
       return "Hay productos duplicados en el catálogo.";

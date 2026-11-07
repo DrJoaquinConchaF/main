@@ -217,3 +217,94 @@
   display: inline-block;
   margin: 0 0 8px;
 }
+
+/* Catalog children must keep their natural height inside the scrolling flex list. */
+.cw .catalog-list button {
+  flex-shrink: 0;
+  min-height: 64px;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.catalog-list strong,
+.catalog-list small,
+.treatment-options strong,
+.treatment-options small {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.catalog-layout > *,
+.catalog-form,
+.catalog-list {
+  min-width: 0;
+}
+.treatment-options label > span {
+  min-width: 0;
+}
+.cw .dose-options {
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+  min-width: 0;
+}
+.dose-options legend {
+  font-size: 13px;
+  font-weight: 650;
+  padding: 0;
+  margin-bottom: 9px;
+  color: var(--brand-text);
+}
+.dose-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cw .dose-chips button {
+  border-radius: 12px;
+  font-size: 13px;
+  padding: 10px 14px;
+  min-height: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.cw .dose-chips button[aria-pressed="true"] {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+  color: var(--brand-on-accent);
+}
+.dose-options > small {
+  display: block;
+  font-size: 11px;
+  color: var(--brand-muted);
+  margin-top: 8px;
+  font-weight: 400;
+}
+.click-options-editor {
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  padding: 14px;
+  margin: 18px 0;
+  min-width: 0;
+}
+.click-options-editor summary {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.click-options-editor a,
+.treatment-clicks a {
+  font-size: 12px;
+  color: var(--brand-accent);
+  overflow-wrap: anywhere;
+}
+.click-option-row {
+  padding: 14px 0;
+  border-top: 1px solid var(--brand-border);
+  margin-top: 16px;
+}
+.click-option-row h3 {
+  font-size: 14px;
+  margin-bottom: 14px;
+}

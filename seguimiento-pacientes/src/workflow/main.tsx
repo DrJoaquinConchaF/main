@@ -1,3 +1,4 @@
+import { installCompactClinical } from "../consultation/compact";
 import React from "react";
 import { openCatalogSettings } from "../treatments/ui";
 import { enhanceLegacyEvolution } from "../evolution/legacy-bridge";
@@ -5,28 +6,35 @@ import { createRoot } from "react-dom/client";
 import { Workspace } from "./workspace";
 import "./style.css";
 import "./design.css";
+import "../consultation/compact.css";
+installCompactClinical();
 const host = document.getElementById("clinical-root")!;
 const root = createRoot(host);
 let current: any = null,
   dismissed = "";
-function close(destination?: string) {
+function close(destination?: string, date?: string) {
   root.render(null);
   document.getElementById("root")?.removeAttribute("inert");
   document.body.classList.remove("clinical-open");
   if (current) dismissed = current.id;
-  if (destination) {
-    const nav = document.querySelector("nav");
-    const button = Array.from(nav?.querySelectorAll("button") || []).find(
-      (b) => b.textContent?.trim() === destination,
-    );
-    (button as HTMLButtonElement | undefined)?.click();
-  }
+  window.dispatchEvent(
+    new CustomEvent("clinical-open-tools", {
+      detail: { destination: destination || "Resumen", date },
+    }),
+  );
 }
-function open(patient: any) {
+function open(patient: any, initialDate?: string) {
   current = patient;
   document.getElementById("root")?.setAttribute("inert", "");
   document.body.classList.add("clinical-open");
-  root.render(<Workspace key={patient.id} patient={patient} onClose={close} />);
+  root.render(
+    <Workspace
+      key={patient.id}
+      patient={patient}
+      initialDate={initialDate}
+      onClose={close}
+    />,
+  );
 }
 let resolving = false;
 async function observe() {
@@ -92,7 +100,7 @@ async function resolve(name: string, forced: boolean) {
     if (patient) {
       current = patient;
       void enhanceLegacyEvolution(patient);
-      if (forced || dismissed !== patient.id) open(patient);
+      if (forced) open(patient);
     } else if (forced)
       window.alert(
         "Hay fichas con el mismo nombre. Agrega RUT o correo a esta ficha para identificarla antes de abrir la consulta.",
@@ -101,6 +109,15 @@ async function resolve(name: string, forced: boolean) {
     resolving = false;
   }
 }
+window.addEventListener("clinical-request-visit", async (event: any) => {
+  if (current?.id !== event.detail?.patientId) {
+    const name = document
+      .querySelector(".patient-header h1")
+      ?.textContent?.trim();
+    if (name) await resolve(name, false);
+  }
+  if (current?.id === event.detail?.patientId) open(current, event.detail.date);
+});
 new MutationObserver(() => void observe()).observe(
   document.getElementById("root")!,
   { subtree: true, childList: true },

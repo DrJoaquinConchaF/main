@@ -250,7 +250,13 @@ export function validateWorkspace(data) {
     )
       return "Frecuencia, duración o MET de actividad inválidos.";
   for (const d of data.drinks)
-    if (!object(d) || !check(d.volume, 0, 10000) || !check(d.count, 0, 1000))
+    if (
+      !object(d) ||
+      !check(d.volume, 0, 10000) ||
+      !check(d.count, 0, 1000) ||
+      (d.otherName !== undefined &&
+        (typeof d.otherName !== "string" || d.otherName.length > 200))
+    )
       return "Volumen o cantidad de bebida inválidos.";
   for (const v of Object.values(data.portions))
     if (!check(v, 0, 1000)) return "Porciones inválidas.";

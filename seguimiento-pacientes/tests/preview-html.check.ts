@@ -76,8 +76,12 @@ for (const width of [1280, 390])
           .click();
         await dialog.getByRole("checkbox", { name: /^Ozempic/ }).check();
         await dialog
-          .getByLabel("Elegir lápiz o pluma de Ozempic", { exact: true })
-          .selectOption("Ozempic 1 mg/dosis");
+          .getByRole("group", {
+            name: "Elegir lápiz o pluma de Ozempic",
+            exact: true,
+          })
+          .getByRole("button", { name: "1 mg/dosis", exact: true })
+          .click();
         const ozempic = dialog
           .locator("details.treatment-selected")
           .filter({ hasText: "Ozempic" });
@@ -96,6 +100,25 @@ for (const width of [1280, 390])
           .click();
         await section("Configuración");
         await dialog.getByRole("button", { name: /^Wegovy/ }).click();
+        assert.equal(
+          await dialog.locator(".catalog-list").evaluate((e) =>
+            Array.from(e.querySelectorAll("button")).every((button) =>
+              Array.from(button.children).every((child) => {
+                const a = button.getBoundingClientRect(),
+                  b = child.getBoundingClientRect();
+                return (
+                  b.top >= a.top &&
+                  b.bottom <= a.bottom &&
+                  b.right <= a.right &&
+                  b.left >= a.left
+                );
+              }),
+            ),
+          ),
+          true,
+          "Texto contenido dentro de cada tarjeta del catálogo",
+        );
+
         await dialog
           .getByLabel(
             "Presentaciones de pluma (mg por dosis, separadas por punto y coma)",

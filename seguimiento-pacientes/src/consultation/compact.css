@@ -1,0 +1,224 @@
+.patient-readonly-summary {
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: 22px;
+  padding: 22px;
+}
+.patient-readonly-summary header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.patient-readonly-summary h2 {
+  font-size: 22px;
+}
+.patient-readonly-summary h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.patient-readonly-summary p {
+  font-size: 12px;
+  color: var(--brand-muted);
+  margin: 8px 0;
+}
+.patient-readonly-summary ul {
+  padding-left: 20px;
+  font-size: 12px;
+  margin: 6px 0 16px;
+}
+.compact-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.compact-summary-stats article {
+  background: var(--brand-soft);
+  padding: 13px;
+  border-radius: 14px;
+}
+.compact-summary-stats small {
+  display: block;
+  color: var(--brand-muted);
+  font-size: 11px;
+}
+.compact-summary-stats strong {
+  display: block;
+  font-size: 18px;
+  margin-top: 6px;
+}
+.compact-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.compact-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.compact-summary-actions button {
+  font-size: 12px;
+}
+.compact-labs {
+  margin: 12px 0;
+}
+.compact-table,
+.compact-import-scroll {
+  overflow: auto;
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  max-width: 100%;
+}
+.compact-table table,
+.compact-import-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.compact-table th,
+.compact-table td,
+.compact-import-table th,
+.compact-import-table td {
+  text-align: left;
+  vertical-align: middle;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--brand-border);
+}
+.compact-table thead,
+.compact-import-table thead {
+  background: var(--brand-soft);
+}
+.compact-table tbody th,
+.compact-import-table tbody th {
+  font-weight: 500;
+}
+.compact-lab-value {
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.compact-lab-value strong {
+  font-weight: 800;
+  color: var(--brand-accent);
+}
+.compact-lab-value small {
+  font-size: 11px;
+  color: var(--brand-muted);
+  font-weight: 400;
+}
+.compact-import-scroll {
+  max-height: 48vh;
+  margin: 12px 0;
+}
+.compact-import-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.compact-import-table input[type="checkbox"] {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--brand-accent);
+}
+.compact-import-table button {
+  min-height: 34px;
+  padding: 6px 9px;
+  font-size: 11px;
+}
+.compact-import-editor {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px 0;
+}
+.compact-import-editor label {
+  font-size: 11px;
+}
+.compact-import-editor input,
+.compact-import-editor select {
+  min-height: 38px;
+  font-size: 13px;
+  padding: 8px;
+}
+.compact-review-warning {
+  display: block;
+  font-weight: 400;
+  color: var(--brand-muted);
+  font-size: 10px;
+  max-width: 260px;
+}
+.cw .cw-card {
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  border-radius: 18px;
+}
+.cw .cw-card-head {
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.cw .cw-field {
+  gap: 5px;
+  margin-bottom: 11px;
+}
+.cw .cw-field input,
+.cw .cw-field select,
+.cw .cw-field textarea {
+  padding: 9px 10px;
+  min-height: 40px;
+}
+.cw .cw-field textarea {
+  min-height: 76px;
+}
+.cw .cw-grid {
+  gap: 12px;
+}
+.cw .cw-repeater {
+  padding: 13px;
+  margin: 10px 0;
+}
+.cw .cw-activity-basic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.cw .cw-activity-options {
+  border-top: 1px solid var(--brand-border);
+  margin-top: 8px;
+  padding-top: 6px;
+}
+.cw .cw-activity-options summary {
+  font-size: 12px;
+}
+@media (max-width: 720px) {
+  .compact-summary-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .compact-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .patient-readonly-summary {
+    padding: 16px;
+  }
+  .compact-import-editor {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cw .cw-activity-basic {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cw .cw-grid {
+    gap: 8px;
+  }
+  .cw .cw-field input,
+  .cw .cw-field select,
+  .cw .cw-field textarea {
+    font-size: 16px;
+  }
+  .compact-table table,
+  .compact-import-table {
+    font-size: 11px;
+  }
+}
