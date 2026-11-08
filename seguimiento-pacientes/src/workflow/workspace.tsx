@@ -1,6 +1,7 @@
 import {
   PreviousContext,
   PreviousHint,
+  PreviousList,
   previousRow,
 } from "../consultation/previous";
 import { WeightHistory } from "../consultation/WeightHistory";
@@ -135,6 +136,7 @@ function Field({
       )}{" "}
       {hint && <small id={hintId}>{hint}</small>}
       <PreviousHint
+        type={type}
         path={previousPath}
         value={previousValue}
         options={options}
@@ -1915,6 +1917,7 @@ function Activities({ values, onChange, nested = false }: any) {
       <button onClick={() => onChange([...values, newActivity()])}>
         Agregar actividad semanal
       </button>
+      <PreviousList group="activities" />
     </>
   );
   return nested ? (
@@ -2040,6 +2043,7 @@ function Drinks({ values, onChange }: any) {
           L/día
         </strong>
       </p>
+      <PreviousList group="drinks" />
     </Card>
   );
 }

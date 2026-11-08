@@ -23,3 +23,9 @@ Las opciones de creatina son 3, 5, 7,5 y 10 **gramos**. Se interpretó «mg» co
 43 pruebas funcionales y 2 pruebas de HTML autónomo. Cobertura: referencia anterior por fecha sin copiar respuestas ni usar datos futuros, persistencia de controles originales, elección y cambio de dosis con cálculo automático, respeto de la corrección manual y de filas revisadas, rechazo de plumas ambiguas/unidades distintas/rangos inválidos, accesos rápidos de suplementos y carga del PDF. Pruebas sobre base temporal independiente. PDF inspeccionado visualmente y mediante extracción de texto. Compilación TypeScript/Vite.
 
 Publicado el 8 de noviembre de 2026 en el Worker existente: `0b271462-0868-42ba-a631-b22e629b8cbf`. Se verificaron hashes del HTML, JS, CSS y PDF publicados, y respuesta 401 sin sesión en las API de pacientes y catálogo. Sin migraciones ni escrituras de datos clínicos en producción.
+
+## Recordatorios con listas vacías
+
+Se añadió un recordatorio gris al pie de Ejercicio habitual e Hidratación que muestra todos los elementos del control anterior incluso si la consulta actual no tiene filas nuevas. Incluye frecuencia y minutos por actividad; bebida, volumen y cantidad diaria; total cuantificado y, si solo existe registro antiguo agregado, litros totales/agua. No copia ni guarda estos valores como datos actuales. Las fechas en recordatorios de Cierre se presentan como día-mes-año.
+
+Verificación móvil ampliada para evaluación, derivación, exámenes, otras indicaciones, metas y ambas fechas de control, junto con listas actuales vacías y conservación de controles anteriores. La suite general pasó 42 casos; el caso ampliado falló inicialmente porque el dato ficticio del control futuro tenía su siguiente cita en el pasado. Corregida esa fecha de prueba, el caso ampliado pasó en una base temporal independiente. Compilación y preparación de despliegue correctas. Sin cambios de esquema, credenciales ni datos de pacientes.

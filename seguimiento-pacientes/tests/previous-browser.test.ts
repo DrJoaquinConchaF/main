@@ -44,6 +44,25 @@ test(
           met: "5",
         },
       ];
+      data.drinks = [
+        { key: "previous-water", name: "Agua", volume: "250", count: "6" },
+        { key: "previous-milk", name: "Leche", volume: "200", count: "1" },
+      ];
+      data.closing = {
+        ...data.closing,
+        assessment: "Cocina en lotes",
+        referral: "Nutricionista",
+        exams: "Control completo",
+        notes: "Mantener suplementación",
+        nextVisit: date === "2026-10-01" ? "2026-11-15" : "2027-01-15",
+        bookedVisit: date === "2026-10-01" ? "2026-11-16" : "2027-01-16",
+        stepsMin: "5000",
+        stepsIdeal: "7000",
+        strength: "2",
+        cardio: "150",
+        dietNotes: "Material mediterráneo",
+        treatmentInstructions: "Revisar tolerancia",
+      };
       data.supplements = [
         {
           name: "Whey protein",
@@ -109,6 +128,47 @@ test(
       await expect(steps.locator("..").locator(".cw-previous")).toContainText(
         "4000",
       );
+      await expect(
+        dialog.getByRole("button", {
+          name: "Agregar actividad semanal",
+          exact: true,
+        }),
+      ).toBeVisible();
+      await expect(
+        dialog.getByLabel("Ejercicio del control anterior", { exact: true }),
+      ).toContainText("HYROX · 2 sesiones/semana · 60 min/sesión");
+      await expect(
+        dialog.getByLabel("Hidratación del control anterior", { exact: true }),
+      ).toContainText("Agua · 250 ml/recipiente · 6 al día");
+      await expect(
+        dialog.getByLabel("Hidratación del control anterior", { exact: true }),
+      ).toContainText("Leche · 200 ml/recipiente · 1 al día");
+      await expect(
+        dialog.getByLabel("Hidratación del control anterior", { exact: true }),
+      ).toContainText("1,7 L/día");
+      assert.equal(await dialog.locator(".cw-activity").count(), 0);
+      await section("Cierre");
+      for (const [label, text] of [
+        ["Evaluación / problemas identificados", "Cocina en lotes"],
+        ["Derivación a nutricionista u otro profesional", "Nutricionista"],
+        ["Exámenes solicitados / pendientes", "Control completo"],
+        ["Otras indicaciones", "Mantener suplementación"],
+        ["Próximo control recomendado", "15-11-2026"],
+        ["Cita agendada en Reservo (si ya existe)", "16-11-2026"],
+        ["Meta mínima de pasos (pasos/día)", "5000"],
+        ["Meta cardio (minutos/semana)", "150"],
+      ]) {
+        await expect(
+          dialog
+            .getByLabel(label, { exact: true })
+            .locator("..")
+            .locator(".cw-previous"),
+        ).toContainText(text);
+      }
+      await page.screenshot({
+        path: "test-results/recordatorio-cierre-390.png",
+        fullPage: true,
+      });
       await section("Mediciones");
       const weight = dialog.getByLabel("Peso (kg)", { exact: true });
       await expect(weight).toHaveValue("");

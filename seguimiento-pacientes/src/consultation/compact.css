@@ -234,3 +234,15 @@
   margin-top: 3px;
   overflow-wrap: anywhere;
 }
+.cw .cw-previous-list {
+  color: #786b71;
+  font-size: 11px;
+  line-height: 1.35;
+  margin-top: 5px;
+}
+.cw .cw-previous-list small {
+  display: block;
+  color: inherit;
+  font-size: inherit;
+  overflow-wrap: anywhere;
+}
