@@ -1,6 +1,6 @@
 // Explicit owner CLI operation: creates a single-use recovery link, never public access.
 import { randomBytes, createHash } from "node:crypto";
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -27,7 +27,7 @@ delete env.CLOUDFLARE_API_TOKEN;
 try {
   const result = spawnSync(
     "node_modules/.bin/wrangler",
-    ["d1", "execute", "DB", "--remote", "--file", sql],
+    ["d1", "execute", "DB", "--remote", "--command", readFileSync(sql, "utf8")],
     { env, stdio: "inherit" },
   );
   if (result.status !== 0) throw new Error("No se emitió el enlace.");
