@@ -1,7 +1,10 @@
 import published from "../legacy/published-worker.mjs";
 import { clinicalApi } from "./workflow";
+import { privateAccess } from "./private-access";
 export default {
   async fetch(req: Request, env: any, ctx: ExecutionContext) {
+    const access = await privateAccess(req, env, ctx);
+    if (access) return access;
     if (new URL(req.url).pathname.startsWith("/api/clinical/")) {
       try {
         return await clinicalApi(req, env);
