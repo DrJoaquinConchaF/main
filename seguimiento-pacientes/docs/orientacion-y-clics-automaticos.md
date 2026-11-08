@@ -21,3 +21,5 @@ Las opciones de creatina son 3, 5, 7,5 y 10 **gramos**. Se interpretó «mg» co
 ## Verificación
 
 43 pruebas funcionales y 2 pruebas de HTML autónomo. Cobertura: referencia anterior por fecha sin copiar respuestas ni usar datos futuros, persistencia de controles originales, elección y cambio de dosis con cálculo automático, respeto de la corrección manual y de filas revisadas, rechazo de plumas ambiguas/unidades distintas/rangos inválidos, accesos rápidos de suplementos y carga del PDF. Pruebas sobre base temporal independiente. PDF inspeccionado visualmente y mediante extracción de texto. Compilación TypeScript/Vite.
+
+Publicado el 8 de noviembre de 2026 en el Worker existente: `0b271462-0868-42ba-a631-b22e629b8cbf`. Se verificaron hashes del HTML, JS, CSS y PDF publicados, y respuesta 401 sin sesión en las API de pacientes y catálogo. Sin migraciones ni escrituras de datos clínicos en producción.

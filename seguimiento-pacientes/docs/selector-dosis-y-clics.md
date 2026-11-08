@@ -1,5 +1,7 @@
 # Selector de dosis y combinaciones de clics
 
+La ampliación posterior solicitada por el propietario, con cálculo proporcional para modelos identificados y PDF de la tabla aportada, está documentada en [Orientación y clics automáticos](orientacion-y-clics-automaticos.md). Las descripciones siguientes corresponden al selector inicial; la nueva ampliación sustituye la ausencia de conversión automática para esos modelos.
+
 ## Corrección de diseño
 
 La lista de Configuración utiliza un contenedor flex con desplazamiento. Se impide que sus botones se reduzcan por debajo de la altura de su contenido, se permite envolver nombres largos y se limita el contenido al ancho disponible. La lista muestra el número de dosis/presentaciones configuradas en lugar de concatenarlas todas.
