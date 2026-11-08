@@ -1,6 +1,6 @@
 # Consulta única, resultados compactos e historia del peso
 
-Estado: implementación preparada y probada localmente; publicación pendiente de reconectar la sesión de Cloudflare. Sin migraciones ni servicios nuevos.
+Estado: publicada el 8 de noviembre de 2026 en el Worker existente. Versión Cloudflare: `4ba515b7-638e-4553-aa31-20fb2d837218`. Sin migraciones ni servicios nuevos. Se verificaron hashes de HTML, JS y CSS publicados y respuesta 401 de las API privadas sin sesión.
 
 La pantalla inicial pasa a ser Resumen, de solo lectura, del último control. La captura completa ocurre en Abrir consulta clínica. Los controles anteriores abren el mismo editor en su fecha; Documentos y Evolución conservan sus funciones especializadas. El acceso a documentos desde la consulta sincroniza la fecha de atención, independiente de la fecha de muestra del laboratorio.
 

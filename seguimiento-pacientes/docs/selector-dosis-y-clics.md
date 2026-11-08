@@ -18,7 +18,7 @@ La persistencia utiliza el catálogo JSON existente, con el campo opcional `clic
 
 Fuente indicada por el propietario: https://penclickchart.com/wegovy-click-calculator/ . El intento de lectura devolvió denegación del proxy (403). Se guardó un borrador de red con `penclickchart.com` y `www.penclickchart.com`, conservando los dominios existentes; no se aplicó/publicó la configuración. No se importaron valores de esa página ni se supuso su contenido. Las filas permanecen vacías por defecto. Los ejemplos automáticos son datos ficticios aislados y no validan equivalencias clínicas.
 
-La comprobación de publicación encontró que la sesión OAuth nativa no está disponible en este entorno restaurado; el token configurado devolvió error Cloudflare 6111. No se creó otro Worker ni se restablecieron secretos. La publicación depende de la reconexión oficial y debe verificarse antes de anunciarse.
+La sesión OAuth se reconectó oficialmente con la cuenta del Worker existente. Publicado el 8 de noviembre de 2026: versión `4ba515b7-638e-4553-aa31-20fb2d837218`. Se verificaron los archivos publicados y la protección de las API privadas. No se creó otro Worker, no se restablecieron secretos ni se activaron servicios nuevos. La importación de valores desde la fuente externa continúa pendiente de acceso y revisión.
 
 ## Validación
 
