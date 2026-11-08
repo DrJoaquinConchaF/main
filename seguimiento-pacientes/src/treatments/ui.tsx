@@ -1,3 +1,15 @@
+import {
+  referencePens,
+  referenceFile,
+  automateClicks,
+  calculateClicks,
+  milligrams,
+} from "./automatic-clicks.mjs";
+import {
+  PreviousContext,
+  PreviousHint,
+  previousRow,
+} from "../consultation/previous";
 import { ClickOptionsEditor } from "./ClickOptionsEditor";
 import {
   choicesForPen,
@@ -30,6 +42,7 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
     [query, setQuery] = useState("");
+  const previousSnapshot = React.useContext(PreviousContext);
   const kind = title.includes("Medicamentos") ? "medication" : "supplement";
   useEffect(() => {
     let active = true;
@@ -125,6 +138,27 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
       {values.map((m: any, i: number) => {
         const entry = available.find((e) => selectedProduct([m], e.name));
         const device = readDevice(m);
+        const previousTreatment = previousRow(
+          previousSnapshot,
+          kind === "medication" ? "medications" : "supplements",
+          m,
+        );
+        const automatic = calculateClicks(device.pen, device.dose);
+        const models = /^(wegovy)$/i.test(m.name.trim()) ? referencePens : [];
+        const model = models.find((model) => model.pen === device.pen);
+        const doseOptions = model
+          ? [
+              ...new Set([
+                ...(entry?.doses || []),
+                "0.75 mg",
+                "1.2 mg",
+                "1.5 mg",
+                "2 mg",
+              ]),
+            ]
+              .filter((dose) => (milligrams(dose) ?? Infinity) <= model.mg)
+              .sort((a, b) => (milligrams(a) ?? 0) - (milligrams(b) ?? 0))
+          : entry?.doses || [];
         const clickChoices = choicesForPen(entry, device.pen);
         const reviewedPens = [
           ...new Set(
@@ -139,7 +173,10 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
           !!entry?.clickCounting || hasClicks(m.notes) || !!device.pen;
         const updateDevice = (patch: any) => {
           const next = structuredClone(values);
-          next[i] = writeDevice(m, patch);
+          next[i] =
+            patch.clicks !== undefined
+              ? writeDevice(m, patch)
+              : automateClicks(writeDevice(m, patch), entry);
           onChange(next);
         };
 
@@ -172,20 +209,38 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                         {pen}
                       </button>
                     ))}
-                    {entry?.doses.map((dose: string) => (
+                    {models.map((model) => (
                       <button
                         type="button"
-                        key={dose}
-                        aria-pressed={
-                          device.pen === m.name + " " + dose + "/dosis"
-                        }
-                        onClick={() =>
-                          updateDevice({ pen: m.name + " " + dose + "/dosis" })
-                        }
+                        key={model.pen}
+                        aria-pressed={device.pen === model.pen}
+                        onClick={() => updateDevice({ pen: model.pen })}
                       >
-                        {dose}/dosis
+                        {model.mg} mg/dosis · {model.clicks} clics · {model.ml}{" "}
+                        mL
                       </button>
                     ))}
+                    {entry?.doses
+                      .filter(
+                        (dose: string) =>
+                          !models.some((model) => dose === model.mg + " mg"),
+                      )
+                      .map((dose: string) => (
+                        <button
+                          type="button"
+                          key={dose}
+                          aria-pressed={
+                            device.pen === m.name + " " + dose + "/dosis"
+                          }
+                          onClick={() =>
+                            updateDevice({
+                              pen: m.name + " " + dose + "/dosis",
+                            })
+                          }
+                        >
+                          {dose}/dosis
+                        </button>
+                      ))}
                   </div>
                   <small>
                     La presentación no modifica la dosis administrada.
@@ -203,11 +258,11 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                   />
                 </label>
               )}
-              {!!entry?.doses.length && (
+              {!!doseOptions.length && (
                 <fieldset className="dose-options">
                   <legend>{"Elegir dosis de " + m.name}</legend>
                   <div className="dose-chips">
-                    {entry.doses.map((dose: string) => (
+                    {doseOptions.map((dose: string) => (
                       <button
                         type="button"
                         key={dose}
@@ -249,6 +304,7 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                       : edit(i, "dose", e.target.value)
                   }
                 />
+                <PreviousHint value={previousTreatment.dose} />
                 {/hierro/i.test(m.name) && (
                   <small>
                     Especifica formulación y cantidad de hierro elemental cuando
@@ -272,6 +328,7 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                   }
                   onChange={(e) => edit(i, "frequency", e.target.value)}
                 />
+                <PreviousHint value={previousTreatment.frequency} />
               </label>
             </div>
             {(entry?.clickCounting || hasClicks(m.notes)) && (
@@ -283,7 +340,10 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                     onChange={(e) => {
                       const next = structuredClone(values);
                       next[i] = e.target.checked
-                        ? { ...m, notes: setClicks(m.notes, true) }
+                        ? automateClicks(
+                            { ...m, notes: setClicks(m.notes, true) },
+                            entry,
+                          )
                         : writeDevice(
                             { ...m, notes: setClicks(m.notes, false) },
                             { clicks: "" },
@@ -316,21 +376,35 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                           </button>
                         ))}
                       </div>
-                      {!clickChoices.length && (
+                      {!clickChoices.length && !automatic && (
                         <p className="cw-muted">
-                          No hay filas revisadas para esta presentación exacta.
-                          Puedes registrar los datos manualmente o añadir la
-                          combinación en Configuración.
+                          Selecciona la pluma multidosis de la tabla para
+                          calcular automáticamente. Otra presentación requiere
+                          su propia referencia. Puedes registrar una combinación
+                          revisada en Configuración.
                         </p>
                       )}
-                      <a
-                        href={clickChartSource}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Consultar la tabla de referencia ↗
+                      <a href={referenceFile} target="_blank" rel="noreferrer">
+                        Abrir tabla de referencia (PDF) ↗
                       </a>
                     </fieldset>
+                    {automatic && (
+                      <p className="cw-muted" aria-live="polite">
+                        Según tabla aportada:{" "}
+                        {automatic.theoretical.toLocaleString("es-CL", {
+                          maximumFractionDigits: 3,
+                        })}{" "}
+                        clics teóricos
+                        {automatic.rounded
+                          ? ` → ${automatic.clicks} clics, redondeado; ≈ ${automatic.deliveredMg.toLocaleString("es-CL", { maximumFractionDigits: 3 })} mg`
+                          : ""}
+                        {device.clicks &&
+                        device.clicks !== String(automatic.clicks)
+                          ? `; valor registrado: ${device.clicks} clics (manual o tabla revisada)`
+                          : ""}
+                        . Revisa que la pluma coincida; no aplica a monodosis.
+                      </p>
+                    )}
                     <label className="cw-field">
                       {"Clics indicados de " + m.name}
                       <input
@@ -342,9 +416,9 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                         }
                       />
                       <small>
-                        Registro manual para la presentación exacta. Al cambiar
-                        pluma o dosis, vuelve a confirmar los clics. Sin
-                        conversión automática entre mg y clics.
+                        Se recalcula al cambiar pluma o dosis cuando corresponde
+                        a la tabla. Puedes corregirlo manualmente; se conservará
+                        tu valor hasta el siguiente cambio de pluma o dosis.
                       </small>
                     </label>
                     <p className="treatment-dose-preview">
@@ -364,6 +438,7 @@ export function TreatmentPicker({ title, values, onChange, onConfigure }: any) {
                 placeholder="Presentación, vía, tolerancia y efectos adversos"
                 onChange={(e) => edit(i, "notes", e.target.value)}
               />
+              <PreviousHint value={previousTreatment.notes} />
             </label>
             <button
               onClick={() =>

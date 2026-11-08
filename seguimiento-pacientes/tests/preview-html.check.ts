@@ -80,7 +80,10 @@ for (const width of [1280, 390])
             name: "Elegir lápiz o pluma de Ozempic",
             exact: true,
           })
-          .getByRole("button", { name: "1 mg/dosis", exact: true })
+          .getByRole("button", {
+            name: "1 mg/dosis",
+            exact: true,
+          })
           .click();
         const ozempic = dialog
           .locator("details.treatment-selected")

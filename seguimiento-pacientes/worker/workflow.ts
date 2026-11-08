@@ -1,4 +1,8 @@
-import { defaultCatalog, validateCatalog } from "../src/treatments/catalog.mjs";
+import {
+  defaultCatalog,
+  validateCatalog,
+  currentCatalog,
+} from "../src/treatments/catalog.mjs";
 import {
   authenticated,
   local,
@@ -46,7 +50,7 @@ export async function clinicalApi(req: Request, env: any): Promise<Response> {
         "SELECT data,version FROM clinical_catalogs WHERE key='treatments'",
       ).first();
       return json({
-        items: row ? JSON.parse(row.data) : defaultCatalog,
+        items: currentCatalog(row ? JSON.parse(row.data) : defaultCatalog),
         version: row?.version || 0,
       });
     }

@@ -12,3 +12,8 @@ await writeFile(
   "public/assets/read-pdf-1cBH5bjo.js",
   patchPdfReader(await readFile("legacy/assets/read-pdf-1cBH5bjo.js", "utf8")),
 );
+await mkdir("public/referencias", { recursive: true });
+await cp(
+  "reference-assets/wegovy-tabla-clics.pdf",
+  "public/referencias/wegovy-tabla-clics.pdf",
+);

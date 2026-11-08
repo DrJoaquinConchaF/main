@@ -31,7 +31,11 @@ export function writeDevice(treatment, patch) {
     .filter(
       (line) =>
         !line.startsWith(penPrefix) &&
-        !(changed && line.startsWith("Fuente de dosis/clics: ")),
+        !(
+          changed &&
+          (line.startsWith("Fuente de dosis/clics: ") ||
+            line.startsWith("Cálculo de clics: "))
+        ),
     )
     .map((line) =>
       line === "Con conteo de clics · lápiz y número de clics: por completar"

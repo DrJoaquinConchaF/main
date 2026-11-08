@@ -58,7 +58,10 @@ test(
           name: "Elegir lápiz o pluma de Wegovy",
           exact: true,
         })
-        .getByRole("button", { name: "2.4 mg/dosis", exact: true })
+        .getByRole("button", {
+          name: "2.4 mg/dosis · 75 clics · 3 mL",
+          exact: true,
+        })
         .click();
       await dialog
         .getByLabel("Dosis administrada de Wegovy", { exact: true })
@@ -69,12 +72,29 @@ test(
       await dialog
         .getByRole("checkbox", { name: "Con conteo de clics", exact: true })
         .check();
+      await expect(
+        dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
+      ).toHaveValue("38");
+      await dialog
+        .getByRole("group", { name: "Elegir dosis de Wegovy", exact: true })
+        .getByRole("button", { name: "1.5 mg", exact: true })
+        .click();
+      await expect(
+        dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
+      ).toHaveValue("47");
+      await dialog
+        .getByRole("group", { name: "Elegir dosis de Wegovy", exact: true })
+        .getByRole("button", { name: "1.2 mg", exact: true })
+        .click();
+      await expect(
+        dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
+      ).toHaveValue("38");
       await dialog
         .getByLabel("Clics indicados de Wegovy", { exact: true })
         .fill("37–38");
       await expect(
         dialog.getByLabel("Medicamentos en uso 1: Notas", { exact: true }),
-      ).toHaveValue(/Pluma utilizada: Wegovy 2.4 mg\/dosis/);
+      ).toHaveValue(/Pluma utilizada: Wegovy multidosis 2.4 mg\/dosis/);
 
       await dialog
         .locator("details.treatment-selector")
@@ -86,6 +106,55 @@ test(
         .getByRole("group", { name: "Elegir dosis de Creatina", exact: true })
         .getByRole("button", { name: "5 g", exact: true })
         .click();
+      const creatine = dialog.getByRole("group", {
+        name: "Elegir dosis de Creatina",
+        exact: true,
+      });
+      await creatine
+        .getByRole("button", { name: "7.5 g", exact: true })
+        .click();
+      await expect(
+        dialog.getByLabel("Suplementos en uso 1: Dosis", { exact: true }),
+      ).toHaveValue("7.5 g");
+      await creatine.getByRole("button", { name: "10 g", exact: true }).click();
+      await expect(
+        dialog.getByLabel("Suplementos en uso 1: Dosis", { exact: true }),
+      ).toHaveValue("10 g");
+      await dialog.getByRole("checkbox", { name: /^Whey protein/ }).check();
+      const protein = dialog.getByRole("group", {
+        name: "Elegir dosis de Whey protein",
+        exact: true,
+      });
+      for (const dose of [
+        "1/2 scoop",
+        "1 scoop",
+        "1 1/2 scoop",
+        "2 scoop",
+        "2 1/2 scoop",
+        "3 scoop",
+      ])
+        await expect(
+          protein.getByRole("button", { name: dose, exact: true }),
+        ).toBeVisible();
+      await protein
+        .getByRole("button", { name: "1 1/2 scoop", exact: true })
+        .click();
+      await dialog
+        .getByLabel("Suplementos en uso 2: Frecuencia", { exact: true })
+        .fill("Según entrenamiento");
+      const table = dialog.getByRole("link", {
+        name: "Abrir tabla de referencia (PDF) ↗",
+        exact: true,
+      });
+      await expect(table).toHaveAttribute(
+        "href",
+        "/referencias/wegovy-tabla-clics.pdf",
+      );
+      const pdfResponse = await fetch(
+        base + "/referencias/wegovy-tabla-clics.pdf",
+      );
+      assert.equal(pdfResponse.status, 200);
+      assert.match(pdfResponse.headers.get("content-type") || "", /pdf/);
       await dialog
         .getByLabel("Suplementos en uso 1: Frecuencia", { exact: true })
         .fill("1 vez al día");
@@ -202,7 +271,7 @@ test(
         .click();
       await expect(
         dialog.getByLabel("Clics indicados de Wegovy", { exact: true }),
-      ).toHaveValue("");
+      ).toHaveValue("37–38");
       await dialog
         .getByRole("group", {
           name: "Seleccionar dosis y clics para esta pluma",

@@ -35,9 +35,23 @@ export const defaultCatalog = [
   entry("topiramato", "medication", "Topiramato", ["25 mg", "50 mg", "100 mg"]),
   entry("samexid", "medication", "Samexid", ["30 mg", "50 mg", "70 mg"]),
   entry("rybelsus", "medication", "Rybelsus", ["3 mg", "7 mg", "14 mg"]),
-  entry("whey", "supplement", "Whey protein", ["20 g", "25 g", "30 g"]),
-  entry("vegetal", "supplement", "Proteína vegetal", ["20 g", "25 g", "30 g"]),
-  entry("creatina", "supplement", "Creatina", ["3 g", "5 g"]),
+  entry("whey", "supplement", "Whey protein", [
+    "1/2 scoop",
+    "1 scoop",
+    "1 1/2 scoop",
+    "2 scoop",
+    "2 1/2 scoop",
+    "3 scoop",
+  ]),
+  entry("vegetal", "supplement", "Proteína vegetal", [
+    "1/2 scoop",
+    "1 scoop",
+    "1 1/2 scoop",
+    "2 scoop",
+    "2 1/2 scoop",
+    "3 scoop",
+  ]),
+  entry("creatina", "supplement", "Creatina", ["3 g", "5 g", "7.5 g", "10 g"]),
   entry("hierro-oral", "supplement", "Hierro oral", []),
   entry("hierro-ev", "supplement", "Hierro endovenoso", []),
   entry("b12-oral", "supplement", "Vitamina B12 oral", ["500 µg", "1000 µg"]),
@@ -122,4 +136,26 @@ export function setClicks(notes, enabled) {
     .split("\n")
     .filter((line) => !line.startsWith(marker));
   return [...(enabled ? [marker] : []), ...lines].filter(Boolean).join("\n");
+}
+
+export function currentCatalog(items) {
+  return items.map((item) => {
+    if (
+      ["whey", "vegetal"].includes(item.id) &&
+      JSON.stringify(item.doses) === JSON.stringify(["20 g", "25 g", "30 g"])
+    )
+      return {
+        ...item,
+        doses: defaultCatalog.find((e) => e.id === item.id).doses,
+      };
+    if (
+      item.id === "creatina" &&
+      JSON.stringify(item.doses) === JSON.stringify(["3 g", "5 g"])
+    )
+      return {
+        ...item,
+        doses: defaultCatalog.find((e) => e.id === item.id).doses,
+      };
+    return item;
+  });
 }

@@ -1,3 +1,8 @@
+import {
+  PreviousContext,
+  PreviousHint,
+  previousRow,
+} from "../consultation/previous";
 import { WeightHistory } from "../consultation/WeightHistory";
 import { LabResults } from "../consultation/compact";
 import { WegovySupport } from "../treatments/WegovySupport";
@@ -82,6 +87,8 @@ function Field({
   onChange,
   type = "text",
   hint,
+  previousPath,
+  previousValue,
   options,
   rows = 3,
   ...rest
@@ -127,6 +134,11 @@ function Field({
         />
       )}{" "}
       {hint && <small id={hintId}>{hint}</small>}
+      <PreviousHint
+        path={previousPath}
+        value={previousValue}
+        options={options}
+      />
     </label>
   );
 }
@@ -336,6 +348,9 @@ export function Workspace({ patient, onClose, initialDate }: any) {
       ].sort() as string[])
     : [];
   const previous = allDates.filter((d) => d < date).at(-1);
+  const previousSnapshot = previous
+    ? { date: previous, data: seedVisit(previous, bundle).data }
+    : null;
   const currentInBody = bundle?.records
     .filter(
       (r: any) => r.kind === "inbody" && (r.attention_date || r.date) === date,
@@ -469,7 +484,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
     setTab(next);
     document.querySelector(".cw-content")?.scrollIntoView({ block: "start" });
   };
-  return (
+  const view = (
     <div
       className="cw"
       role="dialog"
@@ -531,6 +546,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
               />
               <Field
                 label="Tipo de atención"
+                previousPath={["type"]}
                 value={data.type}
                 options={[
                   ["initial", "Evaluación inicial"],
@@ -540,6 +556,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
               />
               <Field
                 label="Modalidad"
+                previousPath={["modality"]}
                 value={data.modality}
                 options={[
                   ["in_person", "Presencial"],
@@ -694,12 +711,14 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       <Field
                         label="Objetivo de consulta / contexto actual"
                         type="textarea"
+                        previousPath={["context"]}
                         value={data.context}
                         onChange={(v: string) => set("", "context", v)}
                       />
                       <div className="cw-grid">
                         <Field
                           label="¿Entendió el método?"
+                          previousPath={["general", "understanding"]}
                           value={data.general.understanding}
                           options={[
                             ["", "No evaluado"],
@@ -714,6 +733,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Adherencia autoinformada (%)"
                           inputMode="decimal"
+                          previousPath={["general", "adherencePercent"]}
                           value={data.general.adherencePercent}
                           hint="0 a 100 · desde el control anterior"
                           onChange={(v: string) =>
@@ -723,6 +743,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Dificultades, dudas y barreras"
                           type="textarea"
+                          previousPath={["general", "barriers"]}
                           value={data.general.barriers}
                           onChange={(v: string) =>
                             set("general", "barriers", v)
@@ -731,6 +752,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Cambios corporales notados"
                           type="textarea"
+                          previousPath={["general", "bodyChanges"]}
                           value={data.general.bodyChanges}
                           onChange={(v: string) =>
                             set("general", "bodyChanges", v)
@@ -741,6 +763,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         label="Rendimiento y recuperación"
                         type="textarea"
                         hint="Cargas, fuerza, capacidad aeróbica, sensaciones y recuperación."
+                        previousPath={["general", "performance"]}
                         value={data.general.performance}
                         onChange={(v: string) =>
                           set("general", "performance", v)
@@ -784,6 +807,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       <Field
                         label="Cambios, tolerancia o efectos adversos"
                         type="textarea"
+                        previousPath={["general", "tolerance"]}
                         value={data.general.tolerance}
                         onChange={(v: string) => set("general", "tolerance", v)}
                       />
@@ -815,6 +839,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             key={k}
                             label={l + " (" + u + ")"}
                             inputMode="decimal"
+                            previousPath={["habits", k]}
                             value={data.habits[k]}
                             onChange={(v: string) => set("habits", k, v)}
                           />
@@ -823,6 +848,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                           <Field
                             key={k}
                             label={l}
+                            previousPath={["habits", k]}
                             value={data.habits[k]}
                             onChange={(v: string) => set("habits", k, v)}
                           />
@@ -837,6 +863,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                           <Field
                             key={k}
                             label={l}
+                            previousPath={["general", k]}
                             value={data.general[k]}
                             onChange={(v: string) => set("general", k, v)}
                           />
@@ -858,6 +885,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                               ["No", "No"],
                               ["No sabe", "No sabe"],
                             ]}
+                            previousPath={["general", k]}
                             value={data.general[k]}
                             onChange={(v: string) => set("general", k, v)}
                           />
@@ -889,6 +917,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             key={k}
                             label={l + " (" + u + ")"}
                             inputMode="decimal"
+                            previousPath={["habits", k]}
                             value={data.habits[k]}
                             onChange={(v: string) => set("habits", k, v)}
                           />
@@ -906,6 +935,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             key={k}
                             label={l}
                             type="textarea"
+                            previousPath={["foodNotes", k]}
                             value={data.foodNotes[k]}
                             onChange={(v: string) => set("foodNotes", k, v)}
                           />
@@ -920,11 +950,13 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Día recordado"
                           type="date"
+                          previousPath={["recall", "date"]}
                           value={data.recall.date}
                           onChange={(v: string) => set("recall", "date", v)}
                         />
                         <Field
                           label="Contexto del día"
+                          previousPath={["recall", "context"]}
                           value={data.recall.context}
                           hint="Oficina, teletrabajo, fin de semana, día de entrenamiento…"
                           onChange={(v: string) => set("recall", "context", v)}
@@ -937,6 +969,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             <Field
                               label={m.name + ": hora"}
                               type="time"
+                              previousValue={
+                                previousSnapshot?.data.recall.meals.find(
+                                  (meal: any) => meal.name === m.name,
+                                )?.time
+                              }
                               value={m.time}
                               onChange={(v: string) =>
                                 change((d) => {
@@ -946,6 +983,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             />
                             <Field
                               label={m.name + ": alimentos y bebidas"}
+                              previousValue={
+                                previousSnapshot?.data.recall.meals.find(
+                                  (meal: any) => meal.name === m.name,
+                                )?.food
+                              }
                               value={m.food}
                               onChange={(v: string) =>
                                 change((d) => {
@@ -955,6 +997,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             />
                             <Field
                               label={m.name + ": cantidad / medida casera"}
+                              previousValue={
+                                previousSnapshot?.data.recall.meals.find(
+                                  (meal: any) => meal.name === m.name,
+                                )?.amount
+                              }
                               value={m.amount}
                               onChange={(v: string) =>
                                 change((d) => {
@@ -964,6 +1011,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             />
                             <Field
                               label={m.name + ": preparación y agregados"}
+                              previousValue={
+                                previousSnapshot?.data.recall.meals.find(
+                                  (meal: any) => meal.name === m.name,
+                                )?.preparation
+                              }
                               value={m.preparation}
                               onChange={(v: string) =>
                                 change((d) => {
@@ -977,6 +1029,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       <Field
                         label="¿Fue un día habitual? Diferencias entre semana y fin de semana"
                         type="textarea"
+                        previousPath={["recall", "typical"]}
                         value={data.recall.typical}
                         onChange={(v: string) => set("recall", "typical", v)}
                       />
@@ -991,6 +1044,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                     >
                       <Field
                         label="Procedencia de las mediciones"
+                        previousPath={["measurementSource"]}
                         value={data.measurementSource}
                         options={[
                           ["", "Seleccionar"],
@@ -1012,6 +1066,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                             key={k}
                             label={l + " (" + u + ")"}
                             inputMode="decimal"
+                            previousPath={["measurements", k]}
                             value={data.measurements[k]}
                             onChange={(v: string) => set("measurements", k, v)}
                           />
@@ -1095,6 +1150,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Fecha de nacimiento"
                           type="date"
+                          previousPath={["demographics", "birthDate"]}
                           value={data.demographics.birthDate}
                           onChange={(v: string) =>
                             set("demographics", "birthDate", v)
@@ -1102,6 +1158,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         />
                         <Field
                           label="Edad (si no hay fecha de nacimiento)"
+                          previousPath={["demographics", "age"]}
                           value={data.demographics.age}
                           inputMode="numeric"
                           onChange={(v: string) =>
@@ -1110,6 +1167,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         />
                         <Field
                           label="Sexo para la ecuación"
+                          previousPath={["demographics", "sex"]}
                           value={data.demographics.sex}
                           options={[
                             ["", "Seleccionar"],
@@ -1413,6 +1471,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       <Field
                         label="Evaluación / problemas identificados"
                         type="textarea"
+                        previousPath={["closing", "assessment"]}
                         value={data.closing.assessment}
                         onChange={(v: string) =>
                           set("closing", "assessment", v)
@@ -1421,6 +1480,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                       <div className="cw-grid">
                         <Field
                           label="Estrategia alimentaria"
+                          previousPath={["closing", "dietStrategy"]}
                           value={data.closing.dietStrategy}
                           options={[
                             ["", "Seleccionar"],
@@ -1432,6 +1492,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         />
                         <Field
                           label="Derivación a nutricionista u otro profesional"
+                          previousPath={["closing", "referral"]}
                           value={data.closing.referral}
                           onChange={(v: string) =>
                             set("closing", "referral", v)
@@ -1440,6 +1501,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Orientaciones alimentarias / material compartido"
                           type="textarea"
+                          previousPath={["closing", "dietNotes"]}
                           value={data.closing.dietNotes}
                           onChange={(v: string) =>
                             set("closing", "dietNotes", v)
@@ -1449,6 +1511,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                           label="Nuevas indicaciones de tratamiento"
                           type="textarea"
                           hint="Distingue cambios o nuevas prescripciones de los medicamentos en uso."
+                          previousPath={["closing", "treatmentInstructions"]}
                           value={data.closing.treatmentInstructions}
                           onChange={(v: string) =>
                             set("closing", "treatmentInstructions", v)
@@ -1457,6 +1520,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Meta mínima de pasos (pasos/día)"
                           inputMode="numeric"
+                          previousPath={["closing", "stepsMin"]}
                           value={data.closing.stepsMin}
                           onChange={(v: string) =>
                             set("closing", "stepsMin", v)
@@ -1465,6 +1529,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Meta ideal de pasos (pasos/día)"
                           inputMode="numeric"
+                          previousPath={["closing", "stepsIdeal"]}
                           value={data.closing.stepsIdeal}
                           onChange={(v: string) =>
                             set("closing", "stepsIdeal", v)
@@ -1473,6 +1538,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Meta fuerza (sesiones/semana)"
                           inputMode="decimal"
+                          previousPath={["closing", "strength"]}
                           value={data.closing.strength}
                           onChange={(v: string) =>
                             set("closing", "strength", v)
@@ -1481,24 +1547,28 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Meta cardio (minutos/semana)"
                           inputMode="numeric"
+                          previousPath={["closing", "cardio"]}
                           value={data.closing.cardio}
                           onChange={(v: string) => set("closing", "cardio", v)}
                         />
                         <Field
                           label="Exámenes solicitados / pendientes"
                           type="textarea"
+                          previousPath={["closing", "exams"]}
                           value={data.closing.exams}
                           onChange={(v: string) => set("closing", "exams", v)}
                         />
                         <Field
                           label="Otras indicaciones"
                           type="textarea"
+                          previousPath={["closing", "notes"]}
                           value={data.closing.notes}
                           onChange={(v: string) => set("closing", "notes", v)}
                         />
                         <Field
                           label="Próximo control recomendado"
                           type="date"
+                          previousPath={["closing", "nextVisit"]}
                           value={data.closing.nextVisit}
                           onChange={(v: string) =>
                             set("closing", "nextVisit", v)
@@ -1507,6 +1577,7 @@ export function Workspace({ patient, onClose, initialDate }: any) {
                         <Field
                           label="Cita agendada en Reservo (si ya existe)"
                           type="date"
+                          previousPath={["closing", "bookedVisit"]}
                           value={data.closing.bookedVisit}
                           onChange={(v: string) =>
                             set("closing", "bookedVisit", v)
@@ -1638,6 +1709,11 @@ export function Workspace({ patient, onClose, initialDate }: any) {
       </main>
     </div>
   );
+  return (
+    <PreviousContext.Provider value={previousSnapshot}>
+      {view}
+    </PreviousContext.Provider>
+  );
 }
 function Stat({ label, value, unit = "" }: any) {
   return (
@@ -1708,6 +1784,7 @@ function HistorySummary({ history, override, onChange }: any) {
   );
 }
 function Activities({ values, onChange, nested = false }: any) {
+  const previousSnapshot = React.useContext(PreviousContext);
   const content = (
     <>
       {values.map((a: any, i: number) => (
@@ -1719,6 +1796,9 @@ function Activities({ values, onChange, nested = false }: any) {
           <div className="cw-activity-basic">
             <Field
               label={"Actividad " + (i + 1) + ": disciplina"}
+              previousValue={
+                previousRow(previousSnapshot, "activities", a)["name"]
+              }
               value={a.name}
               list={"sports-" + a.key}
               onChange={(v: string) => {
@@ -1738,6 +1818,9 @@ function Activities({ values, onChange, nested = false }: any) {
             </datalist>
             <Field
               label={"Actividad " + (i + 1) + ": categoría"}
+              previousValue={
+                previousRow(previousSnapshot, "activities", a)["category"]
+              }
               value={a.category}
               options={[
                 ["fuerza", "Fuerza"],
@@ -1767,6 +1850,11 @@ function Activities({ values, onChange, nested = false }: any) {
                 label={
                   "Actividad " + (i + 1) + ": gasto manual neto (kcal/semana)"
                 }
+                previousValue={
+                  previousRow(previousSnapshot, "activities", a)[
+                    "manualCalories"
+                  ]
+                }
                 value={a.manualCalories}
                 inputMode="decimal"
                 hint="Sustituye el cálculo por MET. Usa gasto neto, descontado el reposo."
@@ -1786,6 +1874,9 @@ function Activities({ values, onChange, nested = false }: any) {
               <Field
                 key={k}
                 label={"Actividad " + (i + 1) + ": " + l}
+                previousValue={
+                  previousRow(previousSnapshot, "activities", a)[k]
+                }
                 value={a[k]}
                 onChange={(v: string) => {
                   const next = structuredClone(values);
@@ -1838,6 +1929,7 @@ function Activities({ values, onChange, nested = false }: any) {
   );
 }
 function Drinks({ values, onChange }: any) {
+  const previousSnapshot = React.useContext(PreviousContext);
   const update = (list: any[]) => {
     const filled = list.filter(
       (d) => num(d.volume) !== null && num(d.count) !== null,
@@ -1859,6 +1951,7 @@ function Drinks({ values, onChange }: any) {
         <div className="cw-grid cw-repeater" key={d.key}>
           <Field
             label={"Bebida " + (i + 1)}
+            previousValue={previousRow(previousSnapshot, "drinks", d)["name"]}
             value={d.name}
             options={[
               "Agua",
@@ -1891,6 +1984,7 @@ function Drinks({ values, onChange }: any) {
           )}
           <Field
             label={"Volumen por recipiente " + (i + 1) + " (ml)"}
+            previousValue={previousRow(previousSnapshot, "drinks", d)["volume"]}
             value={d.volume}
             inputMode="decimal"
             onChange={(v: string) => {
@@ -1901,6 +1995,7 @@ function Drinks({ values, onChange }: any) {
           />
           <Field
             label={"Cantidad diaria " + (i + 1)}
+            previousValue={previousRow(previousSnapshot, "drinks", d)["count"]}
             value={d.count}
             inputMode="decimal"
             onChange={(v: string) => {
